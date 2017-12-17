@@ -1,0 +1,125 @@
+(define (cube x) (* x x x))
+
+(define (inc n) (+ n 1))
+
+(define (sum-cubes a b)
+  (sum cube a inc b))
+
+(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a)
+	 (sum term (next a) next b))))
+
+(define (product term a next b)
+  (if (> a b)
+      1
+      (* (term a)
+	 (product term (next a) next b))))
+
+(define (accumulate combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner (term a)
+		(accumulate combiner null-value term (next a) next b))))
+
+(define (filtered-accumulate combiner null-value term a next b filter)
+  (cond ((> a b) null-value)
+	((filter a) (combiner (term a)
+			    (filtered-accumulate combiner null-value term a next b filter)))
+	((else) (combiner (null-value)
+			  (filtered-accumulate combiner null-value term a next b filter)))))      
+
+(define (prod-accumulate term a next b)
+  (accumulate * 1 term a next b))
+
+(define (sum-accumulate term a next b)
+  (accumulate + 0 term a next b))
+
+(define (wallis terms)
+  (define (inc x) (+ x 1))
+  (define (num k)
+    (if (= k 1)
+	2
+	(+ 2 (* 2 (quotient k 2)))))
+  (define (den k)
+    (if (= k 1)
+	3
+	(+ 3 (* 2 (quotient (- k 1) 2)))))
+  (define numerator (product-iter num 1 inc terms))
+  (define denominator (product-iter den 1 inc terms))
+  (/ numerator denominator))
+
+(define (factorial x)
+  (define (inc n) (+ n 1))
+  (define (identity n) (* n 1))
+  (product identity 1 inc x))
+
+(define (sum-iter term a next b)
+  (define (iter a result)
+    (if (> a b)
+	result
+	(iter (next a) (+ (term a) result))))
+  (iter a 0))
+
+(define (product-iter term a next b)
+  (define (iter a result)
+    (if (> a b)
+	result
+	(iter (next a) (* (term a) result))))
+  (iter a 1))
+
+(define (accumulate-iter combiner null-value term a next b)
+  (define (iter a result)
+    (if (> a b)
+	result
+	(iter (next a) (combiner (term a) result))))
+  (iter a null-value))
+
+(define (integral f a b dx)
+  (define (add-dx x) (+ x dx))
+  (* (sum f (+ a (/ dx 2.0)) add-dx b)
+     dx))
+
+(define (simpson f a b n)
+  (define h (/ (- b a) n))
+  (define (y k) (f (+ a (* k h))))
+  (define (term k)
+    (* (cond ((or (= k 0) (= k n)) 1)
+	     ((* (+ 1 (modulo k 2)) 2)))
+       (y k)))
+  (* (/ h 3)
+     (sum term 0 inc n)
+     ))     
+
+(define tolerance 0.00001)
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (< (abs (- v1 v2)) tolerance))
+  (define (try guess)
+    (newline)
+    (display guess)
+    (let ((next (/ (+ (f guess) guess) 2)))
+      (if (close-enough? guess next)
+	  next
+	  (try next))))
+  (try first-guess))
+
+(fixed-point (lambda (x) (/ (log 1000) (log x))) 60)
+
+(define (cont-frac n d k)
+  (if (> 0 k)
+      (/ n d)
+      (/ n (+ d (cont-frac n d (- k 1))))))
+
+(define (cont-frac-iter n d k)
+  (define (iter i result)
+    (if (> i k)
+	(/ n result)
+	(iter (+ 1 i) (+ d (/ n result)))))
+  (iter 0 1))
+
+(define (euler-d x)
+  (if (= 0 (modulo (+ x 1) 3))
+      (* (/ (+ x 1) 3) 2)
+      1))
