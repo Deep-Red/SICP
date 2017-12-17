@@ -106,10 +106,13 @@
   (try first-guess))
 
 (define (cont-frac n d k)
-  (if (< k 2)
-      (/ (n k) (d k))
-      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
-
+  (define (fraction i)
+    (if (= i k)
+	(/ (n i) (d i))
+	(/ (n i) (+ (d i) (fraction (+ i 1))))))
+  (fraction 1)
+  )
+  
 (define (cont-frac-iter n d k)
   (define (iter i result)
     (if (> i k)

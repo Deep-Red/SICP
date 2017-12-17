@@ -156,9 +156,12 @@ What happens if we (perversely) ask the interpreter to evaluate the combination 
 
 *
 (define (cont-frac n d k)
-  (if (> 1 k)
-      (/ (n k) (d k))
-      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
+  (define (fraction i)
+    (if (= i k)
+	(/ (n i) (d i))
+	(/ (n i) (+ (d i) (fraction (+ i 1))))))
+  (fraction 1)
+  )
 
 10
 
@@ -176,9 +179,12 @@ What happens if we (perversely) ask the interpreter to evaluate the combination 
 
 *
 (define (cont-frac n d k)
-  (if (< k 2)
-      (/ (n k) (d k))
-      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
+  (define (fraction i)
+    (if (= i k)
+	(/ (n i) (d i))
+	(/ (n i) (+ (d i) (fraction (+ i 1))))))
+  (fraction 1)
+  )
 
 (define (euler-d x)
   (if (= 0 (modulo (+ x 1) 3))
@@ -188,7 +194,6 @@ What happens if we (perversely) ask the interpreter to evaluate the combination 
 (define (euler-e x)
   (+ 2 (cont-frac (lambda (i) 1.0) euler-d x)))
 
-NOTE: euler-e still doesn't seem to be exactly right. euler-d has been tested, and cont-frac worked with the previous problem. I cannot identify the problem but the results just oscillate too widely for this to be considered a good way to approximate e.
 *
 
 ---
@@ -206,4 +211,4 @@ A continued fraction representation of the tangent function was published in 177
     (- (* 2 k) 1))
   (cont-frac n d k))
 
-Once again, the answers here are way off. Pretty sure my problem is with (cont-frac) at this point, despite the fact that it works when estimating ϕ.
+*
