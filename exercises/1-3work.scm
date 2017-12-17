@@ -105,12 +105,10 @@
 	  (try next))))
   (try first-guess))
 
-(fixed-point (lambda (x) (/ (log 1000) (log x))) 60)
-
 (define (cont-frac n d k)
-  (if (> 0 k)
-      (/ n d)
-      (/ n (+ d (cont-frac n d (- k 1))))))
+  (if (< k 2)
+      (/ (n k) (d k))
+      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
 
 (define (cont-frac-iter n d k)
   (define (iter i result)
@@ -123,3 +121,20 @@
   (if (= 0 (modulo (+ x 1) 3))
       (* (/ (+ x 1) 3) 2)
       1))
+
+(define (euler-e x)
+  (+ 2 (cont-frac (lambda (i) 1.0) euler-d x)))
+
+(define (print-ed x)
+  (display (euler-d x))
+  (if (> x 1)
+      (print-ed (- x 1))))
+
+(define (tan-cf x k)
+  (define (n k)
+    (if (= k 1)
+	x
+	(- (* x x))))
+  (define (d k)
+    (- (* 2 k) 1))
+  (cont-frac n d k))

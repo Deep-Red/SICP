@@ -156,9 +156,9 @@ What happens if we (perversely) ask the interpreter to evaluate the combination 
 
 *
 (define (cont-frac n d k)
-  (if (> 0 k)
-      (/ n d)
-      (/ n (+ d (cont-frac n d (- k 1))))))
+  (if (> 1 k)
+      (/ (n k) (d k))
+      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
 
 10
 
@@ -175,9 +175,35 @@ What happens if we (perversely) ask the interpreter to evaluate the combination 
 ## **Exercise 1.38:** In 1737, the Swiss mathematician Leonhard Euler published a memoir *De Fractionibus Continuis*, which included a continued fraction expansion for *e*-2, where *e* is the base of the natural logarithms. In this fraction, the N<sub>i</sub> are all 1, and the D<sub>i<sub> are successively 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, .... Write a program that uses your cont-frac procedure from exercise 1.37 to approximate *e*, based on Euler's expansion.
 
 *
+(define (cont-frac n d k)
+  (if (< k 2)
+      (/ (n k) (d k))
+      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
+
 (define (euler-d x)
   (if (= 0 (modulo (+ x 1) 3))
       (* (/ (+ x 1) 3) 2)
       1))
 
-(
+(define (euler-e x)
+  (+ 2 (cont-frac (lambda (i) 1.0) euler-d x)))
+
+NOTE: euler-e still doesn't seem to be exactly right. euler-d has been tested, and cont-frac worked with the previous problem. I cannot identify the problem but the results just oscillate too widely for this to be considered a good way to approximate e.
+*
+
+---
+
+## **Example 1.39:**
+A continued fraction representation of the tangent function was published in 1770 by the German mathematician J.H. Lambert: *(image on page 72)* where x is in radians. Define a procedure (tan-cf x k) that computes an approximation to the tangent function based on Lambert's formula. k specifies the number of terms to compute, as in exercise 1.37.
+
+*
+(define (tan-cf x k)
+  (define (n k)
+    (if (= k 1)
+	x
+	(- (* x x))))
+  (define (d k)
+    (- (* 2 k) 1))
+  (cont-frac n d k))
+
+Once again, the answers here are way off. Pretty sure my problem is with (cont-frac) at this point, despite the fact that it works when estimating ϕ.
