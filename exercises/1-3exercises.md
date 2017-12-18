@@ -212,3 +212,72 @@ A continued fraction representation of the tangent function was published in 177
   (cont-frac n d k))
 
 *
+
+---
+
+## **Exercise 1.40:**## Define a procedure cubic that can be used together with the newtons-method procedure in expressions of the form (newtons-method (cubic a b c) 1) to approximate zeros of the cubic x<sup>3</sup>+ax<sup>2</sup>+bx+c.
+
+*
+(define (cubic a b c)
+  (lambda (x) (+ (* x x x) (* a x x) (* b x) c)))
+
+*
+---
+
+## Exercise 1.41: ##
+### Define a procedure double that takes a procedure of one argument as argument and returns a procedure that applies the original procedure twice. For example, if inc is a procedure that adds 1 to its argument, then (double inc) should be a procedure that adds 2. What value is returned by (((double (double double)) inc) 5)###
+
+*
+    (define (double proc)
+      (lambda (x) (proc (proc x))))
+
+21
+The first call to double will increment by two, nesting it does this again incrementing by a total of four, nesting once more yields four times four, that is a total of sixteen calls to increment.
+*
+
+---
+
+##**Exercise 1.42**##
+###Let f and g be two one-argument functions. The composition f after g is defined to be the function x ⟼ f(g(x)). Define a procedure compose that implements composition. For example, if inc is a procedure that adds 1 to its argument,
+((compose square inc) 6)
+49###
+
+*
+(define (compose f g)
+  (lambda (x) (f (g x))))
+*
+
+---
+##**Exercise 1.43:** If *f* is a numerical function and *n* is a positive integer, then we can form the *n*th repeated application of f, which is defined to be the function whose value at x is f(f(...(f(x))...)). For example, if *f* is the function x ⟼ x + 1, then the *n*th repeated application of *f* is the function that raises its argument to the 2<sup>n</sup>th power. Write a procedure that takes as inputs a procedure that computes *f* and a positive integer *n* and returns the procedure that computes the *n*th repeated application of *f*. Your procedure should be able to be used as follows:
+((repeated square 2) 5)
+625.
+Hint: You may find it convenient to use compose from exercise 1.42.
+
+*
+(define (repeated f n)
+  (if (> n 1)
+      (compose f (repeated f (- n 1)))
+      f))
+
+*
+
+---
+
+##**Exercise 1.44: **##
+### The idea of smoothing a function is an important concept in signal processing. If f is a function and dx is some small number, then the smoothed version of f is the function whose value at a point x is the average of f(x - dx), f(x), and f(x + dx). Write a procedure smooth that takes as input a procedure that computes f and returns a procedure that computes the smoothed f. It is sometimes valuable to repeatedly smooth a function (that is, smooth the smoothed function, and so on) to obtained the n-fold smoothed function. Show how to generate the n-fold smoothed function of any given function using smooth and repeated from exercise 1.43.###
+
+*
+(define (smooth f dx)
+  (lambda (x)
+    (/ (+ (f x) (f (- x dx)) (f (+ x dx))) 3))
+  )
+
+((repeated (smooth cube x) dx) n)
+*
+
+---
+
+##**Exercise 1.45:** ##
+### We saw in section 1.3.3 that attempting to compute square roots by naively finding a fixed point of y ⟼ x/y does not converge, and that this can be fixed by average damping. The same method works for finding cube roots as fixed points of the average-damped y ⟼ x/y<sup>2</sup>. Unfortunately, the process does not work for fourth roots -- a single average damp is not enough to make a fixed-point search for y ⟼ x/y<sup>3</sup> converge. On the other hand, if we average damp twice (i.e., use the average damp of the average damp of y ⟼ x/y<sup>3</sup>) the fixed-point search does converge. Do someexperiments to determine how many average damps are required to compute nth roots as a fixed-point search based upon repeated average damping of y ⟼ x/y<sup>n-1</sup>. Use this to implement a simple procedure for computing nth roots using fixed-point, average-damp, and the repeated procedure of exercise 1.43. Assume that any arithmetic operations you need are available as primitives.###
+
+*
