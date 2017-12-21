@@ -188,3 +188,6 @@
    (average-damp
     (lambda (y) (/ x (expt y (- n 1)))))
    1.0))
+
+(define (iterative-improve test improve guess)
+  (lambda (y) (
