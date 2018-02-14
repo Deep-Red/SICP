@@ -49,19 +49,23 @@
 
 ## **Exercise 1.2** Translate the following expression into prefix form *(image on page 21)*
 
-*(/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5))))) (* 3 (- 6 2) (- 2 7)))*
+```scheme
+(/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5))))) (* 3 (- 6 2) (- 2 7)))
+```
 
 ---
 
 ## **Exercise 1.3** Define a procedure that takes three numbers as arguments and returns the sum of the squares of the two larger numbers.
 
-*(+
+```scheme
+(+
   (if (or (> x y) (> x z))
       (* x x)
       (* y y))
   (if (or (> z x) (> z y))
       (* z z)
-      (* y y))))*
+      (* y y))))
+```
 
 ---
 
@@ -121,7 +125,8 @@ Improves the lower bound of accuracy from around .01 to nearer .0001 and allows 
 ## **Exercise 1.8** Newton's method for cube roots is based on the fact that if y is an approximation to the cube root of x, then a better approximation is given by the value *(image on page 26)*.
 Use this formula to implement a cube-root procedure analogous to the square-root procedure. (In section 1.3.4 we will see how to implement Newton's method in general as an abstraction of these square-root and cube-root procedures.)
 
-*(define (cbrt-iter guess x)
+```scheme
+(define (cbrt-iter guess x)
   (if (cb-good-enough? guess x)
   guess
   (cbrt-iter (cb-improve guess x)
@@ -136,4 +141,5 @@ Use this formula to implement a cube-root procedure analogous to the square-root
 (define (cb-good-enough? guess x)
   (< ( abs (-guess (cb-improve guess x))) 0.001))
 (define (cbrt x)
-  (cbrt-iter 1.0 x))*
+  (cbrt-iter 1.0 x))
+```
