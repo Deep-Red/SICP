@@ -18,14 +18,20 @@
   (cond ((member? wd '(I me)) 'you)
 	((eq? wd 'you) 'i)
 	(else wd)))
-      
-	   
+      	   
 (define (ordered? sent)
   (cond ((empty? (bf sent)) #t)
 	((<= (first sent) (first (bf sent))) (ordered? (bf sent)))
 	(else #f)))
-
-
   
 (define (onewordsentence? sent)
   (eq? (first sent) sent))
+
+(define (ends-e sent)
+  (if (empty? (bf sent))
+      (return-e (first sent))
+      (sentence (return-e (first sent)) (ends-e (bf sent)))))
+      
+(define (return-e wd)
+  (if (eq? (last wd) 'e) wd '()))
+	   
