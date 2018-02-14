@@ -29,6 +29,7 @@
 	    (iter <??> <??>)))
       (iter <??> <??>))
 ```
+##
 ```scheme
     (define (sum-iter term a next b)
       (define (iter a result)
@@ -41,7 +42,7 @@
 ---
 
 ## **Exercise 1.31:** a. The sum procedure is only the simplest of a vast number of similar abstractions that can be captured as higher-order procedures. Write an analogous procedure called product that returns the product of the values of a function at points over a given range. Show how to define factorial in terms of product. Also use product to compute approximations to pi using the formula *(John Wallis's formula, pictured on page 60)*
-b. If your product procedure generates a recursive process, write one that generates an iterative process. If it generates an iterative process, write one that generates a recursive process.
+b. If your product procedure generates a recursive process, write one that generates an iterative process. If it generates an iterative process, write one that generates a recursive process.##
 
 ```scheme
     (define (product term a next b)
@@ -246,7 +247,8 @@ A continued fraction representation of the tangent function was published in 177
 ##**Exercise 1.42**##
 ###Let f and g be two one-argument functions. The composition f after g is defined to be the function x ⟼ f(g(x)). Define a procedure compose that implements composition. For example, if inc is a procedure that adds 1 to its argument,
 ((compose square inc) 6)
-49###
+49
+###
 
 ```scheme
 (define (compose f g)
@@ -254,10 +256,12 @@ A continued fraction representation of the tangent function was published in 177
 ```
 
 ---
-##**Exercise 1.43:** If *f* is a numerical function and *n* is a positive integer, then we can form the *n*th repeated application of f, which is defined to be the function whose value at x is f(f(...(f(x))...)). For example, if *f* is the function x ⟼ x + 1, then the *n*th repeated application of *f* is the function that raises its argument to the 2<sup>n</sup>th power. Write a procedure that takes as inputs a procedure that computes *f* and a positive integer *n* and returns the procedure that computes the *n*th repeated application of *f*. Your procedure should be able to be used as follows:
+##**Exercise 1.43:**##
+###If *f* is a numerical function and *n* is a positive integer, then we can form the *n*th repeated application of f, which is defined to be the function whose value at x is f(f(...(f(x))...)). For example, if *f* is the function x ⟼ x + 1, then the *n*th repeated application of *f* is the function that raises its argument to the 2<sup>n</sup>th power. Write a procedure that takes as inputs a procedure that computes *f* and a positive integer *n* and returns the procedure that computes the *n*th repeated application of *f*. Your procedure should be able to be used as follows:
 ((repeated square 2) 5)
 625.
 Hint: You may find it convenient to use compose from exercise 1.42.
+###
 
 ```scheme
 (define (repeated f n)
