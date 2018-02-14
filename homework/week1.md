@@ -7,7 +7,7 @@ Since the function new-if is not a special form, it evaluates in applicative ord
 ```scheme
 (define (squares args)
 (if (pair? (cdr args))
-(cons* (square (car args)) (squares (cdr args)))
+(append (list (square (car args))) (squares (cdr args)))
 (list (square (car args)))))
 ```
 ---
