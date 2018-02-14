@@ -19,7 +19,11 @@
 	((eq? wd 'you) 'i)
 	(else wd)))
       
-	    
+	   
+(define (ordered? sent)
+  (cond ((empty? (bf sent)) #t)
+	((<= (first sent) (first (bf sent))) (ordered? (bf sent)))
+	(else #f)))
 
 
   
