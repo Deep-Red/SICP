@@ -222,7 +222,8 @@ A continued fraction representation of the tangent function was published in 177
 
 ---
 
-## **Exercise 1.40:**## Define a procedure cubic that can be used together with the newtons-method procedure in expressions of the form (newtons-method (cubic a b c) 1) to approximate zeros of the cubic x<sup>3</sup>+ax<sup>2</sup>+bx+c.
+##Exercise 1.40:##
+###Define a procedure cubic that can be used together with the newtons-method procedure in expressions of the form `(newtons-method (cubic a b c) 1)` to approximate zeros of the cubic x<sup>3</sup>+ax<sup>2</sup>+bx+c.###
 
 ```scheme
 (define (cubic a b c)
@@ -231,7 +232,7 @@ A continued fraction representation of the tangent function was published in 177
 ---
 
 ## Exercise 1.41: ##
-### Define a procedure double that takes a procedure of one argument as argument and returns a procedure that applies the original procedure twice. For example, if inc is a procedure that adds 1 to its argument, then (double inc) should be a procedure that adds 2. What value is returned by (((double (double double)) inc) 5)###
+###Define a procedure double that takes a procedure of one argument as argument and returns a procedure that applies the original procedure twice. For example, if inc is a procedure that adds 1 to its argument, then (double inc) should be a procedure that adds 2. What value is returned by (((double (double double)) inc) 5)###
 
 ```scheme
     (define (double proc)
