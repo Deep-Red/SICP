@@ -107,5 +107,55 @@ to approximate zeros of the cubic x<sup>3</sup>+ax<sup>2</sup>+bx+c.*
 
 ## 1.46
 
-*Several of the numerical methods described in this chapter are instances of an extremely general computational strategy known as iterative improvement. Iterative improvement says that, to compute something, we start with an initial guess for the answer, test if the guess is good enough, and otherwise improve the guess and continue the process using the improved guess as the new guess. Write a procedure `iterative-improve` that takes two procedures as arguments: a method for telling whether a guess is good enough and a method for improving a guess. `iterative-improve` should return as its value a procedure tat takes a guess as a argument and keeps improving the guess until it is good enough. Rewrite the `sqrt` procedure from section 1.1.7 and the `fixed-point` procedure of section 1.3.3 in terms of `iterative-improve`.
+*Several of the numerical methods described in this chapter are instances of an extremely general computational strategy known as iterative improvement. Iterative improvement says that, to compute something, we start with an initial guess for the answer, test if the guess is good enough, and otherwise improve the guess and continue the process using the improved guess as the new guess. Write a procedure `iterative-improve` that takes two procedures as arguments: a method for telling whether a guess is good enough and a method for improving a guess. `iterative-improve` should return as its value a procedure that takes a guess as a argument and keeps improving the guess until it is good enough. Rewrite the `sqrt` procedure from section 1.1.7 and the `fixed-point` procedure of section 1.3.3 in terms of `iterative-improve`.*
 
+```scheme
+(define (iterative-improve good-enough? improve)
+  (define (i-improve guess)
+    (if (good-enough? guess)
+	guess
+	(i-improve (improve guess))))
+  i-improve)
+
+(define (sqrt x)
+  ((iterative-improve (lambda (guess)
+			(< (abs (- (square guess) x))
+			   0.001))
+		      (lambda (guess)
+			(average guess (/ x guess))))
+   1.0))
+```
+___
+# 2.
+
+*Last week you wrote procedures `squares` that squared each number in its argument sentence, and saw `pigl-sent`, that pigled each word in its argument sentence. Generalize this pattern to create a higher-order procedure called `every` that applies an arbitrary procedure, given as an argument, to each word of an argument sentence.*
+
+```scheme
+(define (every proc sent)
+  (if (pair? (cdr sent))
+      (append (list (proc (car sent))) (every proc (cdr sent)))
+      (list (proc (car sent)))))
+```
+
+___
+# 3.
+
+*Our Scheme library provides versions of the `every function from the last exercise and the `keep` function fhown in lecture. Get familiar with these by trying examples such as the following:*
+
+```scheme
+>(every (lambda (letter) (word letter letter)) 'purple)
+(pp uu rr pp ll ee)
+>(every (lambda (number) (if (even? number) (word number number) number)) '(781 5 76 909 24))
+(781 5 7676 909 2424)
+>(keep even? '(781 5 76 909 24))
+(76 24)
+>(keep (lambda (letter) (member? letter 'aeiou)) 'bookkeeper))
+ooeee
+>(keep (lambda (letter) (member? letter 'aeiou)) 'syzygy)
+""
+>(keep (lambda (letter) (member? letter 'aeiou)) '(purple syzygy))
+*** Error:
+    Invalid arguments to MEMBER?: purpleaeiou
+>(keep (lambda (wd) (member? 'e wd)) '(purple syzygy))
+(purple)
+```

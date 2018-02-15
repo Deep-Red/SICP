@@ -3,6 +3,11 @@
       (append (list (square (car args))) (squares (cdr args)))
       (list (square (car args)))))
 
+(define (every proc sent)
+  (if (pair? (cdr sent))
+      (append (list (proc (car sent))) (every proc (cdr sent)))
+      (list (proc (car sent)))))
+
 (define (switch sent)
   (if (empty? (bf sent))
       (substitute-first (first sent))
@@ -110,4 +115,29 @@
       (compose g (repeated g (- n 1)))
       g))
 
-(define (iterative-improve 
+(define (average x guess)
+  (/ (+ x guess) 2))
+
+(define (iterative-improve good-enough? improve)
+  (define (i-improve guess)
+    (if (good-enough? guess)
+	guess
+	(i-improve (improve guess))))
+  i-improve)
+
+(define (sqrt x)
+  ((iterative-improve (lambda (guess)
+			(< (abs (- (square guess) x))
+			   0.001))
+		      (lambda (guess)
+			(average guess (/ x guess))))
+   1.0))
+
+(define (fixed-point f first-guess)
+  ((iterative-improve (lambda (guess)
+			(< (abs (- (f guess) guess))
+			   0.00001))
+		      (lambda (guess)
+			(f guess)))
+   first-guess))
+      
