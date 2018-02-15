@@ -102,3 +102,12 @@
 (define (double g)
   (lambda (x) (g (g x))))
 
+(define (compose f g)
+  (lambda (x) (f (g x))))
+
+(define (repeated g n)
+  (if (> n 1)
+      (compose g (repeated g (- n 1)))
+      g))
+
+(define (iterative-improve 
