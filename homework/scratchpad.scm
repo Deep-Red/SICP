@@ -52,3 +52,53 @@
   (and (display 'and) (display 'is) #f (display 'NOT))
   (display 'a ) (display 'special) (display 'form))
       
+(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a)
+	 (sum term (next a) next b))))
+
+(define (product term a next b)
+  (if (> a b)
+      1
+      (* (term a)
+	 (product term (next a) next b))))
+
+(define (accumulate combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner (term a)
+		(accumulate combiner null-value term (next a) next b))))
+
+(define (filtered-accumulate combiner null-value term a next b filter)
+  (if (> a b)
+      null-value
+      (if (filter a)
+	  (combiner (term a)
+		    (filtered-accumulate combiner null-value term (next a) next b filter))
+	  (combiner null-value
+		    (filtered-accumulate combiner null-value term (next a) next b filter)))))
+
+(define (cubic a b c)
+  (lambda (x) (+ (* x x x) (* a x x) (* b x) c)))
+
+
+(define (inc n) (+ n 1))
+
+(define (factorial x)
+  (product identity 1 inc x))
+
+(define (wallis-num x)
+  (+ 2 (* 2 (floor (/ x 2)))))
+
+(define (wallis-den x)
+  (+ 3 (* 2 (floor (/ (- x 1) 2)))))
+
+(define (wallis-pi x)
+  (* 4
+     (/ (product wallis-num 1 inc x)
+	(product wallis-den 1 inc x))))
+
+(define (double g)
+  (lambda (x) (g (g x))))
+
