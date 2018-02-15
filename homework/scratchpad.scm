@@ -141,3 +141,10 @@
 			(f guess)))
    first-guess))
       
+(((lambda (n) (n n))
+ (lambda (factgen)
+   (lambda (n)
+     (if (> 1 n)
+	 1
+	 (* n ((factgen factgen) (- n 1)))))))
+ 5)
