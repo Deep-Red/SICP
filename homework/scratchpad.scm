@@ -173,7 +173,7 @@
   (fixed-point (lambda (y) (+ 1 (/ 1 y))) 1.0))
 
 (define (cont-frac n d k)
-  (if (< k 1)
+  (if (= k 1)
       (/ (n k) (d k))
       (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
 
@@ -183,3 +183,11 @@
 	result
 	(iter (+ i 1) (/ (n i) (+ (d i) result)))))
   (iter 0 1))
+
+(define (euler-d i)
+  (if (> (modulo (+ i 1) 3) 0)
+      1
+      (* 2 (/ (+ i 1) 3))))
+
+(define (euler-e k)
+  (+ 2 (cont-frac (lambda (i) 1.0) euler-d k)))

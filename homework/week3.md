@@ -38,7 +38,7 @@ x = (1 + &#221A;5) / 2
 
 ```scheme
 (define (cont-frac n d k)
-(if (< k 1)
+(if (= k 1)
 (/ (n k) (d k))
 (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
 ```
@@ -57,4 +57,17 @@ result
 ```
 
 ## 1.38
+
+*In 1737, the Swiss mathematician Leonhard Euler published a memoir De Fractionibus Continuis, which included a continued fraction expansion for e - 2 where e is the base of the natural logarithms. In this fraction, the N<sub>i</sub> are all 1, and the D<sub>i</sub> are successively 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, .... Write a program that uses your `cont-frac` procedure from exercise 1.37 to approximate e, based on Euler's expansion.*
+
+```scheme
+(define (euler-d i)
+(if (> (modulo (+ i 1) 3) 0)
+1
+(* 2 (/ (+ i 1) 3))))
+
+;This is not working. The formula oscillates rather than converging.
+;I've tried substituting cont-frac-iter as well, with the same result.
+(define (euler-e k)
+(+ 2 (cont-frac (lambda (i) 1.0) euler-d k)))
 
