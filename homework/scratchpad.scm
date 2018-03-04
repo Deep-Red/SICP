@@ -156,3 +156,30 @@
 
 (define (fast-expt b n)
   (expt-iter b n 1))
+
+
+(define tolerance 0.00001)
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (< (abs (- v1 v2)) tolerance))
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+	  next
+	  (try next))))
+  (try first-guess))
+
+(define (golden-ratio)
+  (fixed-point (lambda (y) (+ 1 (/ 1 y))) 1.0))
+
+(define (cont-frac n d k)
+  (if (< k 1)
+      (/ (n k) (d k))
+      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
+
+(define (cont-frac-iter n d k)
+  (define (iter i result)
+    (if (= i k)
+	result
+	(iter (+ i 1) (/ (n i) (+ (d i) result)))))
+  (iter 0 1))
