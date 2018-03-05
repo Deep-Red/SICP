@@ -191,3 +191,27 @@
 
 (define (euler-e k)
   (+ 2 (cont-frac (lambda (i) 1.0) euler-d k)))
+
+
+(define (next-perf n)
+  (if (= (sum-of-factors (+ n 1)) (+ n 1))
+      (+ n 1)
+      (next-perf (+ n 1))))
+
+(define (sum-of-factors n)
+  (define (add-factors x total)
+    (cond
+     ((> x (/ n 2)) total)
+     ((= (modulo n x) 0) (add-factors (+ x 1) (+ total x)))
+     (else (add-factors (+ x 1) total))))
+  (add-factors 2 1))
+
+(define (expt b n)
+  (expt-iter b n 1))
+
+(define (expt-iter b counter product)
+  (if (= counter 0)
+      product
+      (expt-iter b
+		 (- counter 1)
+		 (* b product))))

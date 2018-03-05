@@ -71,3 +71,42 @@ result
 (define (euler-e k)
 (+ 2 (cont-frac (lambda (i) 1.0) euler-d k)))
 
+# 2
+
+* A "perfect number" is defined as a number equal to the sum of all its factors less than itself. For example, the first perfect number is 6, because its factors are 1, 2, 3, and 6, and 1+2+3=6. The second perfect number is 28, because 1+2+4+7+14=28. What is the third perfect number? Write a procedure `(next-perf n)` that tests numbers starting with n and continuing with n+1, n+2, etc. until a perfect number is found. Then you can evaluate `(next-perf 29)` to solve the problem. Hint: you'll need a `sum-of-factors` subprocedure.*
+
+```scheme
+(define (next-perf n)
+(if (= (sum-of-factors (+ n 1)) (+ n 1))
+(+ n 1)
+(next-perf (+ n 1))))
+
+(define (sum-of-factors n)
+(define (add-factors x total)
+(cond
+((> x (/ n 2)) total)
+((= (modulo n x) 0) (add-factors (+ x 1) (+ total x)))
+(else (add-factors (+ x 1) total))))
+(add-factors 2 1))
+```
+496
+
+# 3
+
+* Explain the effect of interchanging the order in which the base cases in the `cc` procedure on page 41 of Abelson and Sussman are checked. That is, describe completely the set of arguments for which the original `cc` procedure would return a different value or behave differently from a cc procedure coded as given below, and explain how the returned values would differ.
+```scheme
+(define (cc amount kinds-of-coins)
+(cond ((or (< amount 0) (= kinds-of-coins 0)) 0)
+((= amount 0) 1)
+(else ...))); as in the original version
+```
+*
+
+On an input of n = 0 and a = 0 the newly modified procedure would return 0, whereas the old procedure would return 1 on those inputs.
+
+# 4
+
+*Give an algebraic formula relating the values of the parameters b, n, counter, and product of the expt and exp-iter procedures given near the top of page 45 of Ableson and Sussman. (The kind of answer we're looking for is "the sum of b, n, and the counter times product is always equal to 37."*
+
+The product at each step is equal to b raised to the power of the difference between n and the counter.
+product = b<sup>(n - counter)</sup>
