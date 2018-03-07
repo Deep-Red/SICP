@@ -93,14 +93,13 @@ result
 
 # 3
 
-* Explain the effect of interchanging the order in which the base cases in the `cc` procedure on page 41 of Abelson and Sussman are checked. That is, describe completely the set of arguments for which the original `cc` procedure would return a different value or behave differently from a cc procedure coded as given below, and explain how the returned values would differ.
+*Explain the effect of interchanging the order in which the base cases in the `cc` procedure on page 41 of Abelson and Sussman are checked. That is, describe completely the set of arguments for which the original `cc` procedure would return a different value or behave differently from a cc procedure coded as given below, and explain how the returned values would differ.
 ```scheme
 (define (cc amount kinds-of-coins)
 (cond ((or (< amount 0) (= kinds-of-coins 0)) 0)
 ((= amount 0) 1)
 (else ...))); as in the original version
-```
-*
+```*
 
 On an input of n = 0 and a = 0 the newly modified procedure would return 0, whereas the old procedure would return 1 on those inputs.
 
@@ -110,3 +109,36 @@ On an input of n = 0 and a = 0 the newly modified procedure would return 0, wher
 
 The product at each step is equal to b raised to the power of the difference between n and the counter.
 product = b<sup>(n - counter)</sup>
+
+# Extra:
+
+## 1.
+
+*The partitions of a positive integer are the different ways to break the integer into peices. The number 5 has seven partitions:
+```
+5   (one piece)
+4, 1	 (two pieces)
+3, 2	 (two pieces)
+3, 1, 1	 (three pieces)  
+2, 2, 1	 (three pieces)
+2, 1, 1, 1	(four pieces)
+1, 1, 1, 1, 1	(five pieces)
+```
+The order of the pieces doesn't matter, so the partition 2, 3 is the same as the partition 3, 2 and thus isn't counted twice. 0 has one partition.
+Write a procedure `number-of-partitions` that computes the number of partitions of its nonnegative integer argument.*
+
+```scheme
+(define (number-of-partitions x)
+(partition x x))
+
+(define (partition x y)
+(cond ((= x 0) 1)
+((or (< x 0) (= y 0)) 0)
+(else (+ (partition x (- y 1))
+(partition (- x y) y)))))
+```
+
+## 2.
+
+*Compare the `number-of-partitions` procedure with the `count-change` procedure by completing the following statement: 'Counting partitions is like making change, where the coins are ...`*  
+Counting partitions is like making change, where the coins are available in every whole number denomination.

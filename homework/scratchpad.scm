@@ -215,3 +215,14 @@
       (expt-iter b
 		 (- counter 1)
 		 (* b product))))
+
+(define (number-of-partitions x)
+  (partition x x))
+
+(define (partition x y)
+  (cond ((= x 0) 1)
+	((or (< x 0) (= y 0)) 0)
+	(else (+ (partition x (- y 1))
+		 (partition (- x y) y)))))
+
+  
