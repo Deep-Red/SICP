@@ -93,13 +93,13 @@ result
 
 # 3
 
-*Explain the effect of interchanging the order in which the base cases in the `cc` procedure on page 41 of Abelson and Sussman are checked. That is, describe completely the set of arguments for which the original `cc` procedure would return a different value or behave differently from a cc procedure coded as given below, and explain how the returned values would differ.
+*Explain the effect of interchanging the order in which the base cases in the `cc` procedure on page 41 of Abelson and Sussman are checked. That is, describe completely the set of arguments for which the original `cc` procedure would return a different value or behave differently from a cc procedure coded as given below, and explain how the returned values would differ.*  
 ```scheme
 (define (cc amount kinds-of-coins)
 (cond ((or (< amount 0) (= kinds-of-coins 0)) 0)
 ((= amount 0) 1)
 (else ...))); as in the original version
-```*
+```
 
 On an input of n = 0 and a = 0 the newly modified procedure would return 0, whereas the old procedure would return 1 on those inputs.
 
