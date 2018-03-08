@@ -226,3 +226,11 @@
 		 (partition (- x y) y)))))
 
   
+(define (number-of-partitions-iter x)
+  (partitions-iter x x 0))
+
+(define (partitions-iter amount part result)
+  (cond ((= amount 0) (+ result 1))
+	((< amount 0) result)
+	((= part 0) result)
+	(else (partitions-iter (- amount part) part (partitions-iter amount (- part 1) result)))))

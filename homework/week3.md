@@ -114,7 +114,7 @@ product = b<sup>(n - counter)</sup>
 
 ## 1.
 
-*The partitions of a positive integer are the different ways to break the integer into peices. The number 5 has seven partitions:
+*The partitions of a positive integer are the different ways to break the integer into peices. The number 5 has seven partitions:*  
 ```
 5   (one piece)
 4, 1	 (two pieces)
@@ -124,7 +124,7 @@ product = b<sup>(n - counter)</sup>
 2, 1, 1, 1	(four pieces)
 1, 1, 1, 1, 1	(five pieces)
 ```
-The order of the pieces doesn't matter, so the partition 2, 3 is the same as the partition 3, 2 and thus isn't counted twice. 0 has one partition.
+*The order of the pieces doesn't matter, so the partition 2, 3 is the same as the partition 3, 2 and thus isn't counted twice. 0 has one partition.
 Write a procedure `number-of-partitions` that computes the number of partitions of its nonnegative integer argument.*
 
 ```scheme
@@ -142,3 +142,19 @@ Write a procedure `number-of-partitions` that computes the number of partitions 
 
 *Compare the `number-of-partitions` procedure with the `count-change` procedure by completing the following statement: 'Counting partitions is like making change, where the coins are ...`*  
 Counting partitions is like making change, where the coins are available in every whole number denomination.
+
+## 3.
+
+*(Much harder!) Now write it to generate an iterative process; every recursive call must be a tail call.*
+
+The following is the closest I have been able to get, but I seem to have worked my way back around to a recursive process, just carrying an extra variable through the calculations.
+```scheme
+(define (number-of-partitions-iter x)
+(partitions-iter x x 0))
+
+(define (partitions-iter amount part result)
+  (cond ((= amount 0) (+ result 1))
+        ((< amount 0) result)
+        ((= part 0) result)
+        (else (partitions-iter (- amount part) part (paritions-iter amount (- part 1) result)))))
+```
