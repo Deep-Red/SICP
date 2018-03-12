@@ -233,4 +233,17 @@
   (cond ((= amount 0) (+ result 1))
 	((< amount 0) result)
 	((= part 0) result)
-	(else (partitions-iter (- amount part) part (partitions-iter amount (- part 1) result)))))
+	(else (partitions-iter amount (- part 1) (+ result 1)))))
+
+(define (last-pair x)
+  (if (null? (cdr x))
+      x
+      (last-pair (cdr x))))
+      
+(define (build-parity-list result i l)
+  (cond ((empty? l) l)
+	((even? (- i (car l))) (cons (car l) (build-parity-list result i (cdr l))))
+	(else (build-parity-list result i (cdr l)))))
+
+(define (same-parity i . l)
+  (build-parity-list i i l))
