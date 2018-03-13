@@ -247,3 +247,18 @@
 
 (define (same-parity i . l)
   (build-parity-list i i l))
+
+(define (square-list items)
+  (define (iter things answer)
+    (if (null? things)
+	answer
+	(iter (cdr things)
+	      (cons (square (car things))
+		    answer))))
+  (iter items nil))
+
+(define (for-each procedure operands)
+  (if (empty? operands)
+      #t
+      (and (procedure (car operands)) (for-each procedure (cdr operands)))))
+  
