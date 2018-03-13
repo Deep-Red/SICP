@@ -132,3 +132,41 @@ The `iter` function goes through the list and `cons` puts each successive square
   
 ```
 I'm not confident that this is the proper way to return a value of `true`.
+
+# 2
+
+*Write a procedure `substitute` that takes three arguments: a list an old word, and a new word. It should return a copy of the list, but with every occurrence of the old word replaced by the new word, even in sublists. For example:*
+```scheme
+> (substitute '((lead guitar) (bass guitar) (rhythm guitar) drums) 'guitar 'axe)
+((lead axe) (base axe) (rhythm axe) drums)
+```
+
+```scheme
+(define (substitute list old new)
+  (define (build-sub-list result list old new)
+    (cond ((empty? list) list)
+	  ((list? (car list)) (cons (build-sub-list result (car list) old new) (build-sub-list result (cdr list) old new)))
+	  ((equal? (car list) old) (cons new (build-sub-list result (cdr list) old new)))
+	  (else (cons (car list) (build-sub-list result (cdr list) old new)))))
+  (build-sub-list () list old new))
+```
+
+# 3
+
+*Now write `substitute2` that takes a list, a list of old words, and a list of new words; the last two lists should be the same length. It should return a copy of the first argument, but with each word that occurs in the second argument replaced by the corresponding word of the third argument:*
+```scheme
+> (substitute2 '((4 calling birds) (3 french hens) (2 turtle doves)) '(1 2 3 4) '(one two three four))
+((four calling birds) (three french hens) (two turtle doves))
+```
+
+The following procedure has one more call to `substitute` than should be necessary, but it returns the correct result.
+
+```scheme
+(define (substitute2 list oldl newl)
+  (define (build-sub2-list list old new)
+    (substitute list old new))
+  (substitute list (car oldl) (car newl))
+  (if (null? (cdr oldl))
+      (substitute list (car oldl) (car newl))
+      (substitute2 (substitute list (car oldl) (car newl)) (cdr oldl) (cdr newl))))
+```

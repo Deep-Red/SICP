@@ -262,3 +262,19 @@
       #t
       (and (procedure (car operands)) (for-each procedure (cdr operands)))))
   
+(define (substitute list old new)
+  (define (build-sub-list result list old new)
+    (cond ((empty? list) list)
+	  ((list? (car list)) (cons (build-sub-list result (car list) old new) (build-sub-list result (cdr list) old new)))
+	  ((equal? (car list) old) (cons new (build-sub-list result (cdr list) old new)))
+	  (else (cons (car list) (build-sub-list result (cdr list) old new)))))
+  (build-sub-list () list old new))
+	  
+(define (substitute2 list oldl newl)
+  (define (build-sub2-list list old new)
+    (substitute list old new))
+  (substitute list (car oldl) (car newl))
+  (if (null? (cdr oldl))
+      (substitute list (car oldl) (car newl))
+      (substitute2 (substitute list (car oldl) (car newl)) (cdr oldl) (cdr newl))))
+    
