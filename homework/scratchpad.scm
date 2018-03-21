@@ -278,3 +278,76 @@
       (substitute list (car oldl) (car newl))
       (substitute2 (substitute list (car oldl) (car newl)) (cdr oldl) (cdr newl))))
     
+(define (make-mobile left right)
+  (list left right))
+
+(define (make-branch length structure)
+  (list length structure))
+
+(define (left-branch mobile)
+  (car mobile))
+
+(define (right-branch mobile)
+  (cadr mobile))
+
+(define (branch-length branch)
+  (car branch))
+
+(define (branch-structure branch)
+  (cadr branch))
+
+(define mobile-1 (make-mobile
+		  (make-branch 2 (make-mobile
+				  (make-branch 1 4)
+				  (make-branch 2 3)))
+		  (make-branch 3 (make-mobile
+				  (make-branch 1 (make-mobile
+						  (make-branch 1 2)
+						  (make-branch 2 1)))
+				  (make-branch 1 0)))))
+
+(define (total-weight mobile)
+  (+
+   (if (list? (branch-structure (left-branch mobile)))
+       (total-weight (branch-structure (left-branch mobile)))
+       (branch-structure (left-branch mobile)))
+   (if (list? (branch-structure (right-branch mobile))))
+       (total-weight (branch-structure (right-branch mobile)))
+       (branch-structure (right-branch mobile)))))
+
+(define (balanced? mobile)
+  (and
+   (if (list? (branch-structure (left-branch mobile)))
+       (balanced? (branch-structure (left-branch mobile)))
+       true)
+   (if (list? (branch-structure (right-branch mobile)))
+       (balanced? (branch-structure (right-branch mobile)))
+       true)
+   (=
+    (*
+     (branch-length (left-branch mobile))
+     (branch-structure (left-branch mobile)))
+    (*
+     (branch-length (right-branch mobile))
+     (branch-structure (right-branch mobile))))))
+
+(define (square-list items)
+  (if (null? items)
+      nil
+      (cons (square (car items)) (square-list (cdr items)))))
+
+(define (square-tree tree)
+    (cons
+      (if (pair? (car tree))
+	  (square-tree (car tree))
+	  (square (car tree)))
+      (cond ((null? (cdr tree)) nil)
+	    ((pair? (cdr tree)) (square-tree (cdr tree)))
+	    (square (cdr tree)))))
+
+(define (square-tree tree)
+  (map (lambda (sub-tree)
+	 (if (pair? sub-tree)
+	     (square-tree sub-tree)
+	     (square sub-tree)))
+       tree))
