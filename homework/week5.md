@@ -91,7 +91,7 @@
      (branch-length (right-branch mobile))
      (branch-structure (right-branch mobile))))))
 ```
-It appears to me that there may be a problem with the above code where a mobile will falsely test as balanced as long as all of the terminating mobiles are themselves balanced.
+**It appears to me that there may be a problem with the above code where a mobile will falsely test as balanced as long as all of the terminating mobiles are themselves balanced.**
 ### d:
 `left-branch` and `branch-length` are unchanged.
 ```scheme
@@ -131,3 +131,116 @@ change `list?` checks in `total-weight` and `balanced?` to `pair?`
 		 (square sub-tree)))
 	tree))
 ```
+
+## 2.31
+
+*Abstract your answer to exercise 2.30 to produce a procedure `tree-map` with the property that `square-tree` could be defined as `(define (square-tree tree) (tree-map square tree))`*
+
+```scheme
+(define (tree-map f tree)
+  (map (lambda (sub-tree)
+	 (if (pair? sub-tree)
+	     (tree-map f sub-tree)
+	     (f sub-tree)))
+       tree))
+```
+
+## 2.32
+
+*We can represent a set as a list of distinct elements, and we can represent the set of all subsets of the set as a list of lists. For example, if the set is `(1 2 3)`, then the set of all subsets is `(() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))`. Complete the following definition of a procedure that generates the set of subsets of a set and give a clear explanation of why it works:*
+
+```scheme
+(define (subsets s)
+	(if (null? s)
+	    (list nil)
+	    (let ((rest (subsets (cdr s))))
+	    	 (append rest (map <??> rest)))))
+```
+
+```scheme
+(define (subsets s)
+	(if (null? s)
+	    (list nil)
+	    (let ((rest (subsets (cdr s))))
+	    	 (append rest (map (lambda (x) (cons (car s) x)) rest)))))
+```
+The recursive call to `subsets` with `(cdr s)` as an argument appends to that the `car` of s to each subset of `(cdr s)`.
+**I'm still not sure I've wrapped my head around this though.**
+
+## 2.36
+
+*The procedure `accumulate-n` is similar to `accumulate` except that it takes as its third argument a sequence of sequences, which are all assumed to have the same number of elements. It applies the designated accumulation procedure to combine all the first elements of the sequences, all the second elements of the sequences, and so on, and returns a sequence of the results. for instance, if `s` is a sequence containing four sequences, `((1 2 3) (4 5 6) (7 8 9) (10 11 12))`, then the value of `(accumulate-n + 0 s)` should be the sequence `(22 26 30)`. Fill in the missing expressions in the following definition of `accumulate-n`:*
+
+```scheme
+(define (accumulate-n op init seqs)
+	(if (null? (car seqs))
+	    nil
+	    (cons (accumulate op init <??>)
+	    	  (accumulate-n op init <??>))))
+```
+
+```scheme
+(define (accumulate-n op init seqs)
+	(if (null? (car seqs))
+	    nil
+	    (cons (accumulate op init (map car seqs))
+	    	  (accumulate-n op init (map cdr seqs)))))
+```
+
+## 2.37
+*Suppose we represent vectors v=(v<sub>i</sub>) as sequences of numbers, and matrices m = (m<sub>ij</sub>) as sequences of vectors (the rows of the matrix). For example, the matrix*
+![example matrix](images/ch2-Z-G-20.gif) 
+*is represented as the sequence ((1 2 3 4) (4 5 6 6) (6 7 8 9)). With this representation, we can use sequence operations to concisely express the basic matrix and vector operations. These operations (which are described in any book on matrix algebra) are the following:*
+![example matrix](images/ch2-Z-G-21.gif)
+*We can define the dot product as `(define (dot-product v w) (accumulate + 0 (map * v w)))`. Fill in the missing expressions in the following procedures for computing the other matrix operations. (The procedure `accumulate-n` is defined in exercise 2.36)*
+```scheme
+(define (matrix-*-vector m v)
+	(map <??> m))
+(define (transpose mat)
+	(accumulate-n <??> <??> mat))
+(define (matrix-*-matrix m n)
+	(let ((cols (transpose n)))
+	     (map <??> m)))
+```
+
+```scheme
+(define (matrix-*-vector m v)
+	(map (lambda(row) (dot-product row v)) m))
+(define (transpose mat)
+	(accumulate-n cons nil mat))
+(define (matrix-*-matrix m n)
+	(let ((cols (transpose n)))
+	     (map (lambda(row) (matrix-*-vector cols row)) m)))
+```
+
+## 2.38
+
+*The `accumulate` procedure is known as `fold-right`, because it combines the first element of the sequence with the result of combining all the elements to the right. There is also a `fold-left`, which is similar to `fold-right` except that it combines elements working in the opposite direction:*
+```scheme
+(define (fold-left op initial sequence)
+	(define (iter result rest)
+		(if (null? rest)
+		result
+		(iter (op result (car rest))
+		      (cdr rest))))
+	(iter initial sequence))
+```
+*What are the values of*
+```scheme
+(fold-right / 1 (list 1 2 3))
+(fold-left / 1 (list 1 2 3))
+(fold-right list nil (list 1 2 3))
+(fold-left list nil (list 1 2 3))
+```
+*Give a property that `op` should satisfy to guarantee that `fold-right` and `fold-left` will produce the same values for any sequence.*
+
+```
+1.5
+1/6
+(1 (2 (3 ())))
+(((() 1) 2) 3)
+```
+`op` must be commutative in order for the results of `fold-left` and `fold-right` to reliably produce the same result for any sequence.
+
+## 2.54
+

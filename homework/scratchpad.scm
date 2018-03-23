@@ -351,3 +351,41 @@
 	     (square-tree sub-tree)
 	     (square sub-tree)))
        tree))
+
+(define (tree-map f tree)
+  (map (lambda (sub-tree)
+	 (if (pair? sub-tree)
+	     (tree-map f sub-tree)
+	     (f sub-tree)))
+       tree))
+
+(define (subsets s)
+  (if (null? s)
+      (list nil)
+      (let ((rest (subsets (cdr s))))
+	(append rest (map (lambda (x) (cons (car s) x)) rest)))))
+
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+	  (accumulate op initial (cdr sequence)))))
+
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map car seqs))
+	    (accumulate-n op init (map cdr seqs)))))
+
+(define (dot-product v w)
+  (accumulate + 0 (map * v w)))
+(define (matrix-*-vector m v)
+  (map (lambda(row) (dot-product row v)) m))
+(define (transpose mat)
+  (accumulate-n cons nil mat))
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda(row) (matrix-*-vector cols row)) m)))
+
+(define a (list (list 1 2 -1) (list 2 0 1)))
+(define b (list (list 3 1) (list 0 -1) (list -2 3)))
