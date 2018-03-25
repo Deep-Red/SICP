@@ -389,3 +389,20 @@
 
 (define a (list (list 1 2 -1) (list 2 0 1)))
 (define b (list (list 3 1) (list 0 -1) (list -2 3)))
+
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+	result
+	(iter (op result (car rest))
+	      (cdr rest))))
+  (iter initial sequence))
+
+(define (equal? x y)
+  (cond ((and (null? x) (null? y)) #t)
+	((or (null? x) (null? y)) #f)
+	((and (list? x) (list? y))
+	 (and (equal? (car x) (car y))
+	      (equal? (cdr x) (cdr y))))
+	((or (list? x) (list? y)) #f)
+	(else (eq? x y))))

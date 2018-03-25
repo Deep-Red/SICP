@@ -244,3 +244,30 @@ The recursive call to `subsets` with `(cdr s)` as an argument appends to that th
 
 ## 2.54
 
+*Two lists are said to be `equal?` if they contain equal elements arranged in the same order. For example, `(equal? '(this is a list) '(this is a list))` is true, but `(equal? '(this is a list) '(this (is a) list))` is false. To be more precise, we can define `equal?` recursively in terms of the basic `eq?` equality of symbols by saying that `a` and `b` are `equal?` if they are both symbols and the symbols are `eq?`, or if they are both lists such that `(car a)` is `equal?` to `(car b)` and `(cdr a)` is `equal?` to `(cdr b)`. Using this idea, implement `equal?` as a procedure.*
+
+```scheme
+(define (equal? x y)
+  (cond ((and (null? x) (null? y)) #t)
+	((or (null? x) (null? y)) #f)
+	((and (list? x) (list? y))
+	 (and (equal? (car x) (car y))
+	      (equal? (cdr x) (cdr y))))
+	((or (list? x) (list? y)) #f)
+	(else (eq? x y))))
+```
+
+# 2
+
+*Extend the calculator program from lecture to include words as data, providing the operations `first`, `butfirst`, `last`, `butlast`, and `word`. Unlike Scheme, your calculator should treat words as self-evaluating expressions except when seen as the operator of a compound expression. That is, it should work like these examples:*
+```
+calc: foo
+foo
+calc: (first foo)
+f
+calc: (first (butfirst hello))
+e
+```
+
+**Omitted - Calc program not available on server. May come back later and try to recreate based on lecture.**
+
