@@ -131,3 +131,34 @@ Same as last time, the following would be put into the appropriate installation 
 ```
 
 ## 2.81
+
+*Louis Reasoner has noticed that `apply-generic` may try to coerce the arguments to each other's type even if they already have the same type. Therefore, he reasons, we need to put procedures in the coercion table to "coerce" arguments of each type to their own type. For example, in addition to the `scheme-number->complex` coersion shown above, he would do:*
+```scheme
+(define (scheme-number->scheme-number n) n)
+(define (complex->complex z) z)
+(put-coercion 'scheme-number 'scheme-number
+	      scheme-number->scheme-number)
+(put-coercion 'complex 'complex complex->complex)
+```
+
+*a. With Louis's coercion procedures installed, what happens if `apply-generic` is called with two arguments of type `complex` for an operation that is not found in the table for those types? For example, assume that we've defined a generic exponentiation operation: `(define (exp x y) (apply-generic 'exp x y))` and have put a procedure for exponentiation in the Scheme-number package but not in any other package:*
+```scheme
+;; following added to Scheme-number package
+(put 'exp '(scheme-number scheme-number)
+     (lambda (x y) (tag (expt x y)))) ; using primitive expt
+```
+*What happens if we call `exp` with two complex numbers as arguments?*
+
+*b. Is Louis correct that something had to be done about coercion with arguments of the same type, or does `apply-generic` work correctly as is?*
+
+*c. Modify `apply-generic` so that it doesn't try coercion if the two arguments have the same type.*
+
+a. The program will get caught in a loop, as there won't be a proc, `(length args)` will be 2, and `t1->t2` will succeed due to the newly added entry, calling apply generic again with the same args, restarting the process.
+
+b. Yes, he is right, the same loop will occur if there is no proc for the argument combination.
+
+c. Modify the second `if` clause in `apply-generic` as follows: `(if (or (= (length args) 2) (= (car type-tags) (cdr type-tags))))`.
+
+## 2.83
+
+*Suppose you are designing a generic arithmetic system for dealing with the tower of types shown in figure 2.25: integer, rational, real, complex. For each type (except complex), design a procedure that raises objects of that type one level in the tower. Show how to install a generic `raise` operation that will work for each type (except complex).*
