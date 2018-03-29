@@ -545,7 +545,7 @@
     (and (eq? (numer x) (numer y))
 	 (eq? (denom x) (denom y))))
   (define (=zero?-rat x)
-    (eq? 0 x))
+    (eq? 0 (numer x)))
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
   (put 'add '(rational rational)
@@ -622,3 +622,5 @@
 
 (define (equ? x y) (apply-generic 'equ? x y))
 (define (=zero? x) (apply-generic '=zero? x))
+
+(define (raise x) (apply-generic 'raise x))
