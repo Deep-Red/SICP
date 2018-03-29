@@ -424,7 +424,7 @@
   (put 'real-part '(rectangular) real-part)
   (put 'imag-part '(rectangular) imag-part)
   (put 'magnitude '(rectangular) magnitude)
-  (put 'angle '(rectangular) magnitude)
+  (put 'angle '(rectangular) angle)
   (put 'make-from-real-imag 'rectangular (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'rectangular (lambda (r a) (tag (make-from-mag-ang r a))))
   'done)
@@ -487,3 +487,5 @@
   ((get 'make-from-real-imag 'rectangular) x y))
 (define (make-from-mag-ang r a)
   ((get 'make-from-mag-ang 'polar) r a))
+
+(define (apply-generic op arg) (arg op))

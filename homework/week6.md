@@ -53,7 +53,6 @@ Each division's personell file must be keyed with it's new division identifier, 
 			(error "Unknown op -- MAKE-FROM-MAG-ANG" op))))
 	dispatch)
 ```
-**Untested. Not sure if `put` and `get` are supposed to work properly at this point but when I run `(define cxn2 (make-from-real-imag 1 2))` I get an error: `eval: bad function in : ((get (quote make-from-real-imag) (quote rectangular)) x y)`**
 
 ## 2.76
 
