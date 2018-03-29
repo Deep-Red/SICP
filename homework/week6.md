@@ -67,3 +67,67 @@ A direct dispatch style system requires that every type be aware of each of its 
 If new types will be added often, it is probably best to implement a message-passing system.
 If new operations will be added often, it is probably better to implement a data-directed system.
 
+## 2.77
+
+*Louis Reasoner tries to evaluate the expression `(magnitude z)` where `z` is the object shown in figure 2.24. To his surprise, instead of the answer 5 he gets an error message from `apply-generic`, saying there is no method for the operation `magnitude` on the types `(complex)`. He shows this interaction to Alyssa P. Hacker, who says "The problem is that the complex-number selectors were never defined for `complex` numbers, just for `polar` and `rectangular` numbers. All you have to do to make this work is add the following to the `complex` package:"*
+```scheme
+(put 'real-part '(complex) real-part)
+(put 'imag-part '(complex) imag-part)
+(put 'magnitude '(complex) magnitude)
+(put 'angle '(complex) angle)
+```
+*Describe in detail why this works. As an example, trace through all the procedures called in evaluating the expression `(magnitude z)` where `z` is the object shown in figure 2.24. In particular, how many times is `apply-generic` invoked? What procedure is dispatched to in each case?*
+
+`apply-generic` is called twice. When `(magnitude (complex rectangular 7 . 6))` is called, apply-generic gets called, and looks up 'magnitude under 'complex. Then apply is called again to look up 'magnitude under 'rectangular. Essentially, if I am understanding this correctly, we are inserting a redirect whereby when `'complex 'rectangular x . y` is sought in the table, it strips the first term and looks up `'rectangular x . y`.
+
+## 2.79
+
+*Define a generic equality predicate `equ?` that tests the equality of two numbers, and install it in the generic arithmetic package. This operation should work for ordinary numbers, rational numbers, and complex numbers.*
+
+`(define (equ? x y) (apply-generic 'equ? x y))`
+
+And the following are added to the appropriate sections of their respective installers (as can be seen in the separate scratchwork file):
+
+```scheme
+(put 'equ? '(scheme-number scheme-number)
+       (lambda (x y) (eq? x y)))
+
+(define (equ?-rat x y)
+    (and (eq? (numer x) (numer y))
+	 (eq? (denom x) (denom y))))
+(put 'equ? '(rational rational)
+       (lambda (x y) (equ?-rat x y)))
+
+(define (equ?-complex z1 z2)
+    (and (eq? (real-part z1) (real-part z2))
+	 (eq? (imag-part z1) (imag-part z2))))
+(put 'equ? '(complex complex)
+       (lambda (z1 z2) (equ?-complex z1 z2)))
+```
+
+**Note: this is only designed to work on reduced rational numbers. As long as the rational number was made with the make-rat function this won't be a problem, but if one is manually created in non-reduced form it will not compare correctly unless some procedure to reduce it to lowest terms is also introduced.**
+
+## 2.80
+
+*Define a generic predicate `=zero?` that tests if its argument is zero, and install it in the generic arithmetic package. This operation should work for ordinary numbers, rational numbers, and complex numbers.*
+
+`(define (=zero? x) (apply-generic '=zero? x))`
+
+Same as last time, the following would be put into the appropriate installation packages.
+
+```scheme
+(put '=zero? 'scheme-number
+     	     (lambda (x) (eq? 0 x)))
+
+(define (=zero?-rat x)
+    	(eq? 0 x))
+(put '=zero? 'rational
+     	     (lambda (x) (=zero?-rat x)))
+
+(define (=zero?-complex x)
+	(eq? 0 x))
+(put '=zero? 'complex
+     (lambda (x) (=zero?-complex x)))
+```
+
+## 2.81
