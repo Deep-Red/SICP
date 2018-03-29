@@ -56,3 +56,14 @@ Each division's personell file must be keyed with it's new division identifier, 
 
 ## 2.76
 
+*As a large system with generic operations evolves, new types of data objects or new operations may be needed. For each of the three strategies -- generic operations with explicit dispatch, data-directed style, and message-passing-style --describe the changes that must be made to a system in order to add new types or new operations. Which organization would be most appropriate for a system in which new types must often be added? Which would be most appropriate for a system in which new operations must often be added?*
+
+To add new types to a message-passing system, only the new type must be defined, in which each of it's own operations will be defined. To add a new operation, each type to which the operation applies will have to be modified.
+
+To add new types to a data-directed system, new operations for that type must be defined in the table. To add a new operation, the new operation must be added to the table, along with the corresponding entry for that operation in each relevant type's column.
+
+A direct dispatch style system requires that every type be aware of each of its operations and vice-versa, so both must be modified anytime a new instance of either is implemented.
+
+If new types will be added often, it is probably best to implement a message-passing system.
+If new operations will be added often, it is probably better to implement a data-directed system.
+
