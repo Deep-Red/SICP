@@ -624,3 +624,46 @@
 (define (=zero? x) (apply-generic '=zero? x))
 
 (define (raise x) (apply-generic 'raise x))
+
+(define (make-account balance password)
+  (define attempt-counter 0)
+  (define (withdraw amount)
+    (if (>= balance amount)
+	(begin (set! balance
+		     (- balance amount))
+	       balance)
+	"Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (define (call-the-cops)
+    (error "Too many incorrect attempts, calling the cops."))
+  (define (dispatch p m)
+    (if (eq? p password)
+	(and
+	 (set! attempt-counter 0)
+	 (cond ((eq? m 'withdraw) withdraw)
+	       ((eq? m 'deposit) deposit)
+	       (else (error "Unknown request: MAKE-ACCOUNT" m))))
+	(if (> attempt-counter 5)
+	    (call-the-cops)
+	    (and
+	     (set! attempt-counter (+ attempt-counter 1))
+	     (error "Incorrect password")))))
+    
+  dispatch)
+
+(define (make-joint account oldpass newpass)
+  (define (dispatch p m)
+    (if (eq? p newpass)
+	(account oldpass m)
+	(error "Incorrect password")))
+  dispatch)
+
+(define (make-f)
+  (define loc-var 1)
+  (define (dispatch x)
+    (set! loc-var (* x loc-var))
+    (loc-var))
+  dispatch)
+(define f (make-f))
