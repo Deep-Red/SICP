@@ -667,3 +667,18 @@
     (loc-var))
   dispatch)
 (define f (make-f))
+
+(define (count-pairs x)
+  (let ((already-counted '()))
+  (define (counter x)
+    (if (or (not (pair? x)) (memq x already-counted))
+	0
+	(begin
+	  (set! already-counted (cons x already-counted))
+	  (+ (counter (car x))
+	     (counter (cdr x))
+	     1))))
+    (counter x)))
+
+(define (print-queue queue)
+  (front-ptr queue))
