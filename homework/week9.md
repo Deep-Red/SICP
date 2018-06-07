@@ -17,10 +17,50 @@
 
 ```scheme
 (define three-count '(foo bar baz))
-(count-pairs three-count) ; 3
-;three-count -> [ | ] -> [ | ] -> [ | ] -> null
+;three-count -> [ | ] -> [ | ] -> [ |/]
 ;	     	 |        |        |
 ;		 v	  v	   v
 ;		'foo	 'bar	  'baz
+
+(define x '(foo))
+(define y (cons x x))
+(define four-count (list y))
+;four-count -> [ |/]
+;	        |
+;		v
+;	       [ | ]
+;	        | |
+;               v v
+;	       [ |/]
+;               |
+;               v
+               'foo
+
+(define x '(foo))
+(define y (cons x x))
+(define seven-count (cons y y))
+;seven-count -> [ | ]
+;	     	 | |
+;		 v v
+;		[ | ]
+;                | | 
+;                v v
+;               [ |/]
+;		 |
+;		 v
+;		'foo
+
+(define unlimited-count '(foo bar baz))
+(set-cdr! (cddr unlimited-count) unlimited-count)
+(count-pairs unlimited-count) ; Don't actually run this, it is an infinite loop.
+;                     ___________________
+;		     |                   | 
+;                    v                   | 
+;unlimited-count -> [ | ] -> [ | ] -> [ | ]
+;		     |        |        |
+;		     v	      v	       v
+;		    'foo     'bar     'baz
 ```
+
+## 3.17
 
