@@ -737,18 +737,20 @@
             (if subtable
         	    (insert-loop! (cdr keys) value subtable (list (cadr keys)))
         	    (begin
-                (set-cdr! prev-key (cons keys (cdr prev-key)))
-        	      (insert-loop! (cdr keys) value (cdr table) (list (car keys)))))))
+                (set-cdr! prev-key (list (car keys) (cdr table)))
+        	      (insert-loop! (cdr keys) value (cdr table) (car keys))))))
         (begin
-          (let ((record (assoc (car keys) (cdr prev-key))))
+          (let ((record (assoc (car keys) (list table))))
             (if record
-              (set-cdr! record value)
-              (set-cdr! prev-key
-                (cons
-                  (cons (car keys) value)
-                    (cdr prev-key))))))))
+              (set-cdr! record (cons (car keys) value))
+              (set-cdr! table
+                  (cons (car keys) value)))))))
     (insert-loop! keys value table table)
     'ok)
+
+(define t1 (make-table))
+
+(insert! '(a 1) 'one t1)
 
 (define (assoc key records)
   (cond ((null? records) false)
@@ -758,5 +760,3 @@
 
 (define (make-table)
   (list '*table*))
-
-(define t1 (make-table))
