@@ -23,12 +23,12 @@
   (cond ((member? wd '(I me)) 'you)
 	((eq? wd 'you) 'i)
 	(else wd)))
-      	   
+
 (define (ordered? sent)
   (cond ((empty? (bf sent)) #t)
 	((<= (first sent) (first (bf sent))) (ordered? (bf sent)))
 	(else #f)))
-  
+
 (define (onewordsentence? sent)
   (eq? (first sent) sent))
 
@@ -36,7 +36,7 @@
   (if (empty? (bf sent))
       (return-e (first sent))
       (sentence (return-e (first sent)) (ends-e (bf sent)))))
-      
+
 (define (return-e wd)
   (if (eq? (last wd) 'e) wd '()))
 
@@ -51,12 +51,12 @@
 (define (or-special?)
   (display '(or is))
   (or #t (display 'NOT))
-  (display '(a special function))) 
+  (display '(a special function)))
 
 (define (and-special?)
   (and (display 'and) (display 'is) #f (display 'NOT))
   (display 'a ) (display 'special) (display 'form))
-      
+
 (define (sum term a next b)
   (if (> a b)
       0
@@ -140,7 +140,7 @@
 		      (lambda (guess)
 			(f guess)))
    first-guess))
-      
+
 (((lambda (n) (n n))
  (lambda (factgen)
    (lambda (n)
@@ -225,7 +225,7 @@
 	(else (+ (partition x (- y 1))
 		 (partition (- x y) y)))))
 
-  
+
 (define (number-of-partitions-iter x)
   (partitions-iter x x 0))
 
@@ -239,7 +239,7 @@
   (if (null? (cdr x))
       x
       (last-pair (cdr x))))
-      
+
 (define (build-parity-list result i l)
   (cond ((empty? l) l)
 	((even? (- i (car l))) (cons (car l) (build-parity-list result i (cdr l))))
@@ -261,7 +261,7 @@
   (if (empty? operands)
       #t
       (and (procedure (car operands)) (for-each procedure (cdr operands)))))
-  
+
 (define (substitute list old new)
   (define (build-sub-list result list old new)
     (cond ((empty? list) list)
@@ -269,7 +269,7 @@
 	  ((equal? (car list) old) (cons new (build-sub-list result (cdr list) old new)))
 	  (else (cons (car list) (build-sub-list result (cdr list) old new)))))
   (build-sub-list () list old new))
-	  
+
 (define (substitute2 list oldl newl)
   (define (build-sub2-list list old new)
     (substitute list old new))
@@ -277,7 +277,7 @@
   (if (null? (cdr oldl))
       (substitute list (car oldl) (car newl))
       (substitute2 (substitute list (car oldl) (car newl)) (cdr oldl) (cdr newl))))
-    
+
 (define (make-mobile left right)
   (list left right))
 
@@ -650,7 +650,7 @@
 	    (and
 	     (set! attempt-counter (+ attempt-counter 1))
 	     (error "Incorrect password")))))
-    
+
   dispatch)
 
 (define (make-joint account oldpass newpass)
@@ -690,12 +690,6 @@
 	(cdr record)
 	false)))
 
-(define (assoc key records)
-  (cond ((null? records) false)
-	((equal? key (caar records))
-	 (car records))
-	(else (assoc key (cdr records)))))
-
 (define (insert! key value table)
   (let ((record (assoc key (cdr table))))
     (if record
@@ -704,9 +698,6 @@
 		  (cons (cons key value)
 			(cdr table)))))
   'ok)
-
-(define (make-table)
-  (list '*table*))
 
 (define (lookup key-1 key-2 table)
   (let ((subtable (assoc key-1 (cdr table))))
@@ -719,17 +710,53 @@
 (define (insert! key-1 key-2 value table)
   (let ((subtable (assoc key-1 (cdr table))))
     (if subtable
-	(let ((record
+	     (let ((record
 	       (assoc key-2 (cdr subtable))))
-	  (if record
-	      (set-cdr! record value)
-	      (set-cdr!
-	       subtable
-	       (cons (cons key-2 value)
-		     (cdr subtable)))))
-	(set-cdr!
-	 table
-	 (cons (list key-1 (cons key-2 value))
-	       (cdr table)))))
+	        (if record
+	           (set-cdr! record value)
+	           (set-cdr! subtable
+                (cons (cons key-2 value) (cdr subtable)))))
+	      (set-cdr! table
+	         (cons (list key-1 (cons key-2 value)) (cdr table)))))
   'ok)
 
+(define (lookup keys table)
+  (if (null? (cdr keys))
+      (let ((record (assoc (car keys) (cdr table))))
+	(if record (cdr record) false)))
+      (let ((subtable (assoc (car keys) (cdr table))))
+	(if subtable
+	    (lookup (cdr keys) subtable)
+	    false)))
+
+(define (insert! keys value table)
+  (define (insert-loop! keys value table prev-key)
+    (if (pair? (cdr keys))
+      (let ((subtable (member (list (car keys)) (cdr table))))
+        (begin
+            (if subtable
+        	    (insert-loop! (cdr keys) value subtable (list (cadr keys)))
+        	    (begin
+                (set-cdr! prev-key (cons keys (cdr prev-key)))
+        	      (insert-loop! (cdr keys) value (cdr table) (list (car keys)))))))
+        (begin
+          (let ((record (assoc (car keys) (cdr prev-key))))
+            (if record
+              (set-cdr! record value)
+              (set-cdr! prev-key
+                (cons
+                  (cons (car keys) value)
+                    (cdr prev-key))))))))
+    (insert-loop! keys value table table)
+    'ok)
+
+(define (assoc key records)
+  (cond ((null? records) false)
+	((equal? key (caar records))
+	 (car records))
+	(else (assoc key (cdr records)))))
+
+(define (make-table)
+  (list '*table*))
+
+(define t1 (make-table))
