@@ -730,27 +730,21 @@
 	    false)))
 
 (define (insert! keys value table)
-  (define (insert-loop! keys value table prev-key)
-    (if (pair? (cdr keys))
-      (let ((subtable (member (list (car keys)) (cdr table))))
-        (begin
-            (if subtable
-        	    (insert-loop! (cdr keys) value subtable (cadr prev-key))
-        	    (begin
-                (set-cdr! prev-key (cons (list (car keys)) (cdr prev-key)))
-        	      (insert-loop! (cdr keys) value (cdr table) (cadr prev-key))))))
-        (begin
-          (let ((record (assoc prev-key (list table))))
-            (if record
-              (set-cdr! record (cons (cons (car keys) value) (cdr record)))
-              (set-cdr! table
-                  (cons (cons prev-key (cons (car keys) value)) (cdr table))))))))
-    (insert-loop! keys value table table)
-    'ok)
+  (define (insert-loop! keys subtable)
+    (pair? (cdr keys))
+;     When keys are nested further
+      (let ((record (assoc (car keys) (cdr subtable))))
+        (if record
+          (set-cdr! record value)
+          (set-cdr! subtable (cons (cons (car keys) value) (cdr subtable)))
+          )))
+
+  (insert-loop! keys table)
+  'ok)
 
 (define t1 (make-table))
 
-(insert! '(a 1) 'one t1)
+(insert! '(a) 'one t1)
 (insert! '(a 2) 'two t1)
 
 (define (assoc key records)
