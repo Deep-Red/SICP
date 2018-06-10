@@ -721,13 +721,16 @@
   'ok)
 
 (define (lookup keys table)
-  (if (null? (cdr keys))
-      (let ((record (assoc (car keys) (cdr table))))
-	(if record (cdr record) false)))
-      (let ((subtable (assoc (car keys) (cdr table))))
-	(if subtable
-	    (lookup (cdr keys) subtable)
-	    false)))
+    (if (null? (cdr keys))
+        (let ((record (assoc (car keys) (cdr table))))
+  	       (if record
+             (cdr record)
+             false))
+        (let ((subtable (assoc (car keys) (cdr table))))
+  	       (if subtable
+  	         (lookup (cdr keys) subtable)
+  	         false)))
+  )
 
 (define (insert! keys value table)
   (define (insert-loop! keys table)

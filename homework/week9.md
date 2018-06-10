@@ -43,7 +43,7 @@
 ;	     	 | |
 ;		 v v
 ;		[ | ]
-;                | | 
+;                | |
 ;                v v
 ;               [ |/]
 ;		 |
@@ -54,8 +54,8 @@
 (set-cdr! (cddr unlimited-count) unlimited-count)
 (count-pairs unlimited-count) ; Don't actually run this, it is an infinite loop.
 ;                     ___________________
-;		     |                   | 
-;                    v                   | 
+;		     |                   |
+;                    v                   |
 ;unlimited-count -> [ | ] -> [ | ] -> [ | ]
 ;		     |        |        |
 ;		     v	      v	       v
@@ -112,3 +112,34 @@ The car of the queue points to the start of the queue. This results in the list 
 
 *Generalizing one- and two-dimensional tables, show how to implement a table in which values are stored under an arbitrary number of keys and different values may be stored under different numbers of keys. The `lookup` and `insert!` procedures should take as input a list of keys used to access the table.*
 
+```scheme
+(define (lookup keys table)
+    (if (null? (cdr keys))
+        (let ((record (assoc (car keys) (cdr table))))
+  	       (if record
+             (cdr record)
+             false))
+        (let ((subtable (assoc (car keys) (cdr table))))
+  	       (if subtable
+  	         (lookup (cdr keys) subtable)
+  	         false)))
+  )
+
+(define (insert! keys value table)
+  (define (insert-loop! keys table)
+    (if (pair? (cdr keys))
+      (let ((subtable (assoc (car keys) (cdr table))))
+        (if subtable
+          (insert-loop! (cdr keys) subtable)
+          (begin
+            (set-cdr! table (cons (list (car keys)) (cdr table)))
+            (insert-loop! keys table))))
+      (let ((record (assoc (car keys) (cdr table))))
+        (if record
+          (set-cdr! record value)
+          (set-cdr! table (cons (cons (car keys) value) (cdr table)))
+          ))))
+
+  (insert-loop! keys table)
+  'ok)
+```
