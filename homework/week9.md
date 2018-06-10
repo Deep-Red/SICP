@@ -150,9 +150,9 @@ The car of the queue points to the start of the queue. This results in the list 
 ```scheme
 (define (fib n)
 	(cond ((= n 0) 0)
-				((= n 1) 1)
-				(else (+ (fib (- n 1))
-								 (fib (- n 2))))))
+		((= n 1) 1)
+			(else (+ (fib (- n 1))
+				(fib (- n 2))))))
 ```  
 *The memoized version of the same procedure is*  
 ```scheme
@@ -160,10 +160,10 @@ The car of the queue points to the start of the queue. This results in the list 
 	(memoize
 		(lambda (n)
 			(cond ((= n 0) 0)
-						((= n 1) 1)
-						(else
-							(+ (memo-fib (- n 1))
-								 (memo-fib (- n 2))))))))
+				((= n 1) 1)
+				(else
+					(+ (memo-fib (- n 1))
+						(memo-fib (- n 2))))))))
 ```
 *where the memoizer is defined as*
 ```scheme
