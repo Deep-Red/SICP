@@ -183,3 +183,28 @@ The car of the queue points to the start of the queue. This results in the list 
 
 memo-fib computes each fibonacci number once, insert!s it into the table, and then looks it up from then on. This requires one call to lookup and one call to insert! for each integer up to n. After calulating the number the first time, further lookups of that number or any lower number are in constant time, as they only require one lookup.  
 Yes.
+
+# 2
+
+*Vector questions:*
+
+## 1
+
+*Write `vector-append`, which takes two vectors as arguments and returns a new vector containing the elements of both arguments, analogous to `append` for lists.*
+```scheme
+(define (vector-append v1 v2)
+  (define (loop newvec n)
+    (if (>= 0 n)
+      newvec
+      (begin
+        (if (> n (vector-length v1))
+          (vector-set! newvec (- n 1) (vector-ref v2 (- n (vector-length v1) 1)))
+          (vector-set! newvec (- n 1) (vector-ref v1 (- n 1))))
+        (loop newvec (- n 1)))))
+
+
+  (loop (make-vector (+ (vector-length v1) (vector-length v2))) (+ (vector-length v1) (vector-length v2)))
+)
+```
+
+## 2

@@ -760,3 +760,17 @@
 
 (define (make-table)
   (list '*table*))
+
+(define (vector-append v1 v2)
+  (define (loop newvec n)
+    (if (>= 0 n)
+      newvec
+      (begin
+        (if (> n (vector-length v1))
+          (vector-set! newvec (- n 1) (vector-ref v2 (- n (vector-length v1) 1)))
+          (vector-set! newvec (- n 1) (vector-ref v1 (- n 1))))
+        (loop newvec (- n 1)))))
+
+
+  (loop (make-vector (+ (vector-length v1) (vector-length v2))) (+ (vector-length v1) (vector-length v2)))
+)
