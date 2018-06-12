@@ -794,20 +794,23 @@
   (populate-vec! newvec (vector-length vec) (vector-length newvec)))
 
 (define (bubble-sort! vec)
-  (define (comp-loop index)
-    (if (< (vector-ref vec index) (vector-ref vec (+ index 1)))
+  (define (comp-loop index set)
+    (if (> (vector-ref vec index) (vector-ref vec (+ index 1)))
       (begin
         (define temp (vector-ref vec index))
         (vector-set! vec index (vector-ref vec (+ index 1)))
-        (vector-set! vec (+ index 1) temp))))
-  (define (iter-loop sorted)
-    (if (>= sorted (- (vector-length vec) 1))
+        (vector-set! vec (+ index 1) temp)
+        (if (< index (- (vector-length vec) 2)) (comp-loop (+ index 1) set)))
+      (if (< index (- (vector-length vec) 2)) (comp-loop (+ index 1) set))))
+  (define (iter-loop set)
+    (if (>= set (vector-length vec))
       vec
       (begin
-        (comp-loop sorted)
-        (iter-loop (+ sorted 1)))))
+        (comp-loop 0 set)
+        (iter-loop (+ set 1)))))
   (iter-loop 0))
 
+  (define v3 (make-vector 14))
   (vector-set! v3 0 11)
   (vector-set! v3 1 9)
   (vector-set! v3 2 7)
@@ -815,4 +818,13 @@
   (vector-set! v3 4 6)
   (vector-set! v3 5 9)
   (vector-set! v3 6 17)
-  (vector-set! v3 7 7)
+  (vector-set! v3 7 98)
+  (vector-set! v3 8 -1)
+  (vector-set! v3 9 -6)
+  (vector-set! v3 10 0)
+  (vector-set! v3 11 34)
+  (vector-set! v3 12 100)
+  (vector-set! v3 13 -12)
+
+
+  (bubble-sort! v3)

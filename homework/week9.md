@@ -234,3 +234,25 @@ Yes.
   (define newvec (make-vector (newvec-sizer (vector-length vec) 0)))
   (populate-vec! newvec (vector-length vec) (vector-length newvec)))
 ```
+
+## 3
+*Sorting a vector...*
+```scheme
+(define (bubble-sort! vec)
+  (define (comp-loop index set)
+    (if (> (vector-ref vec index) (vector-ref vec (+ index 1)))
+      (begin
+        (define temp (vector-ref vec index))
+        (vector-set! vec index (vector-ref vec (+ index 1)))
+        (vector-set! vec (+ index 1) temp)
+        (if (< index (- (vector-length vec) 2)) (comp-loop (+ index 1) set)))
+      (if (< index (- (vector-length vec) 2)) (comp-loop (+ index 1) set))))
+  (define (iter-loop set)
+    (if (>= set (vector-length vec))
+      vec
+      (begin
+        (comp-loop 0 set)
+        (iter-loop (+ set 1)))))
+  (iter-loop 0))
+```
+Runs in n<sup>2</sup> time as the outer and inner loop will each run for each element in the worst case.
