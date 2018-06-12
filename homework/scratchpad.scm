@@ -774,3 +774,21 @@
 
   (loop (make-vector (+ (vector-length v1) (vector-length v2))) (+ (vector-length v1) (vector-length v2)))
 )
+
+(define (vector-filter pred vec)
+  (define (newvec-sizer veclen newlen)
+    (if (< 0 veclen)
+      (if (pred (vector-ref vec (- veclen 1)))
+        (newvec-sizer (- veclen 1) (+ newlen 1))
+        (newvec-sizer (- veclen 1) newlen))
+      newlen))
+  (define (populate-vec! resultvec index-old index-new)
+    (if (> 1 index-old)
+      newvec
+      (if (pred (vector-ref vec (- index-old 1)))
+        (begin
+          (vector-set! resultvec (- index-new 1) (vector-ref vec (- index-old 1)))
+          (populate-vec! resultvec (- index-old 1) (- index-new 1)))
+        (populate-vec! resultvec (- index-old 1) index-new))))
+  (define newvec (make-vector (newvec-sizer (vector-length vec) 0)))
+  (populate-vec! newvec (vector-length vec) (vector-length newvec)))

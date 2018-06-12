@@ -208,3 +208,29 @@ Yes.
 ```
 
 ## 2
+
+*Write `vector-filter`, which takes a predicate function and a vector as arguments, and returns a new vector containing only those elements of the argument vector for which the predicate retruns true. The new vector should be exactly big enough for the chosen elements. Compare the running time of your program to this version:*  
+```scheme
+(define (vector-filter pred vec)
+	(list->vector (filter pred (vector-> list vec))))
+```
+
+```scheme
+(define (vector-filter pred vec)
+  (define (newvec-sizer veclen newlen)
+    (if (< 0 veclen)
+      (if (pred (vector-ref vec (- veclen 1)))
+        (newvec-sizer (- veclen 1) (+ newlen 1))
+        (newvec-sizer (- veclen 1) newlen))
+      newlen))
+  (define (populate-vec! resultvec index-old index-new)
+    (if (> 1 index-old)
+      newvec
+      (if (pred (vector-ref vec (- index-old 1)))
+        (begin
+          (vector-set! resultvec (- index-new 1) (vector-ref vec (- index-old 1)))
+          (populate-vec! resultvec (- index-old 1) (- index-new 1)))
+        (populate-vec! resultvec (- index-old 1) index-new))))
+  (define newvec (make-vector (newvec-sizer (vector-length vec) 0)))
+  (populate-vec! newvec (vector-length vec) (vector-length newvec)))
+```
