@@ -98,7 +98,9 @@ On subsequent evaluations of `(stream-ref x 5)` the output will simply be `5`.
 0 ; defining accum does not change the value of sum
 1 ; when seq is defined accum is evaluated for the car, adding 1 to sum
 6 ; seq generates 1, 3, 6... 6 is the first one that meets the filter test for even?. sum is set to 1, 3, and 6 during this time by the call to accum.
-66 ; 10 is the first integer in seq that meets the filter in z. so, 1, 3, 6, and 10 are added to sum. ...I'm unsure why this is 66 rather than 26...
-136 ; stream-ref returns 136,
-210 ; okay so it is showing the highest calculated value so far, but I'm not following the reason, that is, I get that the memoization is keeping the value of sum from continuing to grow with each successive call, but I don't understand why it reflects the current highest call rather than the sum of each 'first call' up to this point.
+10 ; 10 is the first integer in seq that meets the filter in z.
+136 ; stream-ref returns 136, which is equivalent to (stream-ref seq 15)
+210 ; accum continues to be called with each successive viewing of the stream seq until it is finally set at the highest called value.
 ```
+
+Without the memoization sum should be incremented repeatedly, as each time a higher stream-ref of seq is called all previous items would have to be viewed as well.
