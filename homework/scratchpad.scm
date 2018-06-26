@@ -916,3 +916,11 @@
 (define (display-line x)
   (newline)
   (display x))
+
+(define ones (cons-stream 1 ones))
+
+(define integers
+  (cons-stream 1 (add-streams ones integers)))
+
+(define (mul-streams s1 s2)
+  (stream-map * s1 s2))
