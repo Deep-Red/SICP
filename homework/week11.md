@@ -127,3 +127,11 @@ This should be a stream of powers of 2 - 1, 2, 4, 8...
 (define factorials
   (cons-stream 1 (mul-streams integers factorials)))
 ```
+## 3.55
+
+*Define a procedure `partial-sums` that takes as argument a stream `S` and returns the stream whose elements are `S<sub>0</sub>,S<sub>0</sub> + S<sub>1</sub>,S<sub>0</sub> + S<sub>1</sub> + S<sub>2</sub>, ...`. For example, `(partial-sums integers)` should be the stream `1, 3, 6, 10, 15, ...`.*
+
+```scheme
+(define (partial-sums s)
+  (cons-stream (stream-car s) (add-streams (partial-sums s) (stream-cdr s))))
+```
