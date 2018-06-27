@@ -176,3 +176,46 @@ Now all we have to do is combine elements from these sources. For this we define
 ```scheme
 (define S (cons-stream 1 (merge (scale-stream S 2) (merge (scale-stream S 3) (scale-stream S 5)))))
 ```
+
+## 3.64
+
+*Write a procedure `stream-limit` that takes as arguments a stream and a number (the tolerance). It should examine the stream until it finds two successive elements that differ in absolute value by less than the tolerance, and return the second of the two elements. Using this, we could compute square roots up to a given tolerance by `(define (sqrt x tolerance) (stream-limit (sqrt-stream x) tolerance))`*
+
+```scheme
+(define (stream-limit stream tolerance)
+  (define (compare-elements e)
+    (if (> tolerance (abs (- (stream-ref stream e) (stream-ref stream (+ e 1)))))
+      (stream-ref stream (+ e 1))
+      (compare-elements (+ e 1))))
+  (compare-elements 0))
+```
+
+## 3.66
+
+*Examine the stream `(pairs integers integers)`. Can you make any general comments about the order in which pairs are placed into the stream? For example, approximately how many pairs precede the pair (1, 100)? (If you can make precise mathematical statements here, all the better. But feel free to give more qualitative answers if you find yourself getting bogged down.)*
+
+- Discounting the initial pair (1, 1), there are 2<sup>n - 1</sup> pairs of the form (1, x) between the double (n, n) and the subsequent double; that is, there are 2<sup>4</sup> (16) pairs beginning with 1 between (5, 5) and (6, 6).
+
+- Likewise there are 2<sup>n - 2</sup> pairs of the form (2, x) between the double (n, n) and the subsequent double; i.e., there are 2<sup>1</sup> (2) pairs beginning with 2 between (3, 3) and (4, 4).
+
+- This means before each double (n, n) there are approximately 2<sup>n - 1</sup> + 2<sup>n - 2</sup> ... + 2<sup>1</sup> pairs. For (4, 4) this would mean 8 + 4 + 2 = 14 pairs preceding it. (5, 5) is the 31<sup>st</sup> (accessed by stream-ref 30) pair in the stream.
+
+- This seems to follow the pattern of 2<sup>n</sup> - 2. So, (100, 100) would be pair number 2^100 - 1, that is stream-ref 2^100 - 2. `(stream-ref (pairs integers integers) (- (expt 2 100) 2))`
+
+- The pair (n, n + 1) lies halfway between the pairs (n, n) and (n+1, n+1).
+
+## 3.68
+
+*Louis Reasoner thinks that building a stream of pairs from three parts is unnecessarily complicated. Instead of separating the pair (S<sub>0</sub>, T<sub>0</sub>) from the rest of the pairs in the first row, he proposes to work with the whole first row, as follows:*
+
+```scheme
+(define (pairs s t)
+  (interleave
+    (stream-map
+      (lambda (x) (list (stream-car s) x)) t)
+      (pairs (stream-cdr s) (stream-cdr t))))
+```
+
+*Does this work? Consider what happens if we evaluate (pairs integers integers) using Louis's definition of `pairs`.*
+
+No, this does not work. This appears to have the opposite problem of that mentioned in the text, in that it will attempt to continue through all of the second stream before repeating the first.

@@ -938,3 +938,40 @@
    stream))
 
 (define S (cons-stream 1 (merge (scale-stream S 2) (merge (scale-stream S 3) (scale-stream S 5)))))
+
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream
+      1.0 (stream-map
+        (lambda (guess)
+          (sqrt-improve guess x))
+          guesses)))
+  guesses)
+
+(define (average a b)
+  (/ (+ a b) 2))
+
+(define (stream-limit stream tolerance)
+  (define (compare-elements e)
+    (if (> tolerance (abs (- (stream-ref stream e) (stream-ref stream (+ e 1)))))
+      (stream-ref stream (+ e 1))
+      (compare-elements (+ e 1))))
+  (compare-elements 0))
+
+(define (interleave s1 s2)
+  (if (stream-null? s1)
+    s2
+    (cons-stream
+      (stream-car s1)
+      (interleave s2 (stream-cdr s1)))))
+
+(define (pairs s t)
+  (cons-stream
+    (list (stream-car s) (stream-car t))
+    (interleave (stream-map (lambda (x)
+      (list (stream-car s) x))
+      (stream-cdr t))
+      (pairs (stream-cdr s) (stream-cdr t)))))
