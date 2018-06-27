@@ -975,3 +975,14 @@
       (list (stream-car s) x))
       (stream-cdr t))
       (pairs (stream-cdr s) (stream-cdr t)))))
+
+(define (fract-stream fraction-list)
+  (cons-stream (quotient (* 10 (car fraction-list)) (cadr fraction-list))
+    (fract-stream (list (remainder (* 10 (car fraction-list)) (cadr fraction-list)) (cadr fraction-list)))))
+
+(define (approximation stream numdigits)
+  (define (build-list new-list ref)
+    (if (< ref 0)
+      new-list
+      (build-list (cons (stream-ref stream ref) new-list) (- ref 1))))
+  (build-list '() (- numdigits 1)))
