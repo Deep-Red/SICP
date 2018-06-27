@@ -929,3 +929,12 @@
   (cons-stream (stream-car s) (add-streams (partial-sums s) (stream-cdr s))))
 
 (define exs (partial-sums integers))
+
+(define S (cons-stream 1 (merge <??> <??>)))
+
+(define (scale-stream stream factor)
+  (stream-map
+   (lambda (x) (* x factor))
+   stream))
+
+(define S (cons-stream 1 (merge (scale-stream S 2) (merge (scale-stream S 3) (scale-stream S 5)))))
