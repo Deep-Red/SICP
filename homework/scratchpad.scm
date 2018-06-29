@@ -1002,5 +1002,85 @@
     ((application? exp) (apply (eval (operator exp) env) (list-of-values (operands exp) env)))
     (else (error "Unknown expression type: EVAL" exp))))
 
-(define (eval-dd exp env)
+(define (apply procedure arguments)
+  (cond ((primitive-procedure? procedure) (apply-primitive-procedure procedure arguments))
+    ((compound-procedure? procedure)
+      (eval-sequence (procedure-body procedure) (extend-environment (prodecure-parameters procedure)
+        arguments (procedure-environment procedure))))
+    (else (error "Unknown procedure type: APPLY" procedure))))
+
+(define (list-of-values exps env)
+  (if (no-operands? exps)
+    '()
+    (cons (eval (first-operand exps) env)
+      (list-of-values (rest-operands exps) env))))
+
+(define (eval-if exp env)
+  (if (true? (eval (if-predicate exp) env))
+    (eval (if-consequent exp) env)
+    (eval (if-alternative exp) env)))
+
+(define (eval-sequence exps env)
+  (cond ((last-exp? exps) (eval (first-exp exps) env))
+    (else (eval (first-exp exps) env) (eval-sequence (rest-exps exps) env))))
+
+(define (eval-assignment exp env)
+  (set-variable-value!
+    (assignment-variable exp)
+    (eval (assignment-value exp) env)
+    env)
+    'ok)
+
+(define (eval-definition exp env)
+  (define-variable!
+    (definition-variable exp)
+    (eval (definition-value exp) env)
+    env)
+    'ok)
+
+(define (variable? exp) (symbol? exp))
+
+(define (application? exp) (pair? exp))
+
+(define (self-evaluating? exp)
+  (cond ((number? exp) true)
+        ((string? exp) true)
+        (else false)))
+
+(define the-empty-environment '())
+
+(define (lookup-variable-value var env)
+  (define (env-loop env)
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (env-loop
+              (enclosing-environment env)))
+            ((eq? var (car vars))
+             (car vals))
+            (else (scan (cdr vars)
+                        (cdr vals)))))
+    (if (eq? env the-empty-environment)
+        (error "Unbound variable" var)
+        (let ((frame (first-frame env)))
+          (scan (frame-variables frame)
+                (frame-values frame)))))
+  (env-loop env))
+
+(define eval-dd-table (make-table))
+
+(define (populate-eval-dd-table)
+  (insert! '(quote) text-of-quotation eval-dd-table)
+  (insert! '(set!) eval-assignment eval-dd-table)
+  (insert! '(define) eval-definition eval-dd-table)
+  (insert! '(if) eval-if eval-dd-table)
+  (insert! '(lambda) (lambda (exp env) make-procedure (lambda-parameters exp) (lambda-body exp) env) eval-dd-table)
+  (insert! '(begin) (lambda (exp env) (eval-sequence (begin actions exp) env)) eval-dd-table)
+  (insert! '(cond) (lambda (exp env) (eval-dd (cond->if exp) env)) eval-dd-table)
   )
+
+(define (eval-dd exp env)
+  (cond ((self-evaluating? exp) exp)
+    ((variable? exp) (lookup-variable-value exp env))
+    ((lookup (list (car exp)) eval-dd-table) ((lookup (list (car exp)) eval-dd-table) exp env))
+    ((application? exp) (apply (eval (operator exp) env)))
+    (else (error "Unknown expression type -- EVAL" exp))))
