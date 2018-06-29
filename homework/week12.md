@@ -45,3 +45,11 @@ Using the table manipulation methods defined earlier:
 ((let? exp) (eval (let->combination exp) env))
 ;...
 ```
+
+## 4.7
+
+*`Let&ast;` is similar to `let`, except that the bindings of the `let&ast;` variables are performed sequentially from left to right, and each binding is made in an environment in which all of the preceding bindings are visible. For example `(let&ast; ((x 3) (y (+ x 2)) (z (+ x y 5))) (&ast; x z))` returns 39. Explain how a `let&ast;` expression can be rewritten as a set of nested `let` expressions, and write a procedure `let&ast;->nested-lets` that performs this transformation. If we have already implemented `let` (Exercise 4.6) and we want to extend the evaluator to handle `let&ast;`, is it sufficient to add a clause to eval whose action is `(eval (let&ast;->nested-lets exp) env)` or must we explicitly expand `let&ast;` in terms of non-derived expressions?*
+
+```scheme
+
+```

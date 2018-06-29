@@ -1093,3 +1093,9 @@
 (define (let-values exp) (map cadr (cadr exp)))
 (define (let->combination exp)
   (cons (make-lambda (let-vars exp) (let-body exp)) (let-values exp)))
+
+
+(define (let*->nested-lets exp)
+; within (cdr exp) get each (possibly nested) expression and then cons them together
+; in order as nested let statements.
+  )
