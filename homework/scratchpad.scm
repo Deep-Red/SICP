@@ -999,6 +999,7 @@
     ((lambda? exp) (make-procedure (lambda-parameters exp) (lambda-body exp) env))
     ((begin? exp) (eval-sequence (begin actions exp) env))
     ((cond? exp) (eval (cond->if exp) env))
+    ((let? exp) (eval (let->combination exp) env))
     ((application? exp) (apply (eval (operator exp) env) (list-of-values (operands exp) env)))
     (else (error "Unknown expression type: EVAL" exp))))
 
@@ -1084,3 +1085,11 @@
     ((lookup (list (car exp)) eval-dd-table) ((lookup (list (car exp)) eval-dd-table) exp env))
     ((application? exp) (apply (eval (operator exp) env)))
     (else (error "Unknown expression type -- EVAL" exp))))
+
+(define (let? exp)
+  (tagged-list? exp 'let))
+(define (let-body exp) (cddr exp))
+(define (let-vars exp) (map car (cadr exp)))
+(define (let-values exp) (map cadr (cadr exp)))
+(define (let->combination exp)
+  (cons (make-lambda (let-vars exp) (let-body exp)) (let-values exp)))

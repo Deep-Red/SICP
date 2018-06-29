@@ -27,3 +27,21 @@ Using the table manipulation methods defined earlier:
     ((application? exp) (apply (eval (operator exp) env)))
     (else (error "Unknown expression type -- EVAL" exp))))
 ```
+
+## 4.6
+
+*Let expressions are derived expressions, because `(let ((<var<sub>1</sub>> <exp<sub>1</sub>>) ... (<var<sub>n</sub>> <exp<sub>n</sub>)) <body>)` is equivalent to `((lambda (<var<sub>1</sub>> ... <var<sub>n</sub>) <body>) <exp<sub>1</sub>> ... <exp<sub>n</sub>)`. Implement a syntactic transformation let->combination that reduces evaluating `let` expressions to evaluating combinations of the type shown above, and add the appropriate clause to `eval` to handle `let` expressions.*
+
+```scheme
+(define (let? exp)
+  (tagged-list? exp 'let))
+(define (let-body exp) (cddr exp))
+(define (let-vars exp) (map car (cadr exp)))
+(define (let-values exp) (map cadr (cadr exp)))
+(define (let->combination exp)
+  (cons (make-lambda (let-vars exp) (let-body exp)) (let-values exp)))
+
+;...
+((let? exp) (eval (let->combination exp) env))
+;...
+```
