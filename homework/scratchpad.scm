@@ -1094,8 +1094,31 @@
 (define (let->combination exp)
   (cons (make-lambda (let-vars exp) (let-body exp)) (let-values exp)))
 
-
+(define (let*? exp) (tagged-list? exp 'let))
+(define (let*-body exp) (cddr exp))
+(define (let*-args exp) (cadr exp))
 (define (let*->nested-lets exp)
-; within (cdr exp) get each (possibly nested) expression and then cons them together
-; in order as nested let statements.
-  )
+  (let ((args (let*-args exp) (body (let*-body exp)))
+  (define (make-lets exps)
+    (if (null? exps?)
+      body
+      (list 'let (list (car exprs)) (make-lets (cdr exps)))))
+  (make-lets args))))
+
+(define (make-frame variables values)
+  (if (null? (cdr variables))
+    (list (cons (car variables) (car values)))
+    (cons (cons (car variables) (car values)) (make-frame (cdr variables) (cdr values)))))
+
+(define env-a (make-frame '(a b c d) '(2 4 8 16)))
+
+(define (frame-variables frame)
+  (if (null? (cdr frame))
+    (caar frame)
+    (cons (caar frame) (frame-variables (cdr frame)))))
+(define (frame-values frame)
+  (if (null? (cdr frame))
+    (cdar frame)
+    (cons (cdar frame) (frame-values (cdr frame)))))
+(define (add-binding-to-frame! var val frame)
+  (set-cdr! frame (cons (cons var val) (cdr frame))))
