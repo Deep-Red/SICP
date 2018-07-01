@@ -100,3 +100,27 @@ I don't think that `(eval (let*-> nested-lets exp) env)` will work on its own. I
 ```
 
 This setup of `make-unbound!` only affects the first frame of the current environment, in case other procedures are depending on variables higher up in the chain. I think this is the right decision, based on the fact that PHP treats `unset` in a similar fashion.
+
+## 4.14
+
+*Eva Lu Ator and Louis Reasoner are each experimenting with the metacircular evaluator. Eva types in the definition of `map`, and runs some test programs that use it. They work fine. Louis, in contrast, has installed the system version of `map` as a primitive for the metacircular evaluator. When he tries it, things go terribly wrong. Explain why Louis's `map` fails even though Eva's works.*
+
+When the system version of map is called, it cannot properly interpret the arguments to eval, since they are in a format that is different than the underlying Scheme.
+
+## 4.15
+
+*Given a one-argument procedure `p` and and object `a`, `p` is said to "halt" on `a` if evaluating the expression `(p a)` returns a value (as opposed to terminating with an error message or running forever). Show that it is impossible to write a procedure `halts?` that correctly determines whether `p` halts on `a` for any procedure `p` and object `a`. Use the following reasoning: If you had such a procedure `halts?`, you could implement the following program:*
+
+```scheme
+(define (run-forever)
+  (run-forever))
+
+(define (try p)
+  (if (halts? p p)
+    (run-forever)
+    'halted))
+```
+
+*Now consider evaluating the expression (try try) and show that any possible outcome (either halting or running forever) violates the intended behavior of `halts?`.*
+
+If the inner `try` runs forever, then the outer `try` will return `'halted`, whereas if the inner `try` halts the outer `try` will run forever. 
