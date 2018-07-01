@@ -82,3 +82,21 @@ I don't think that `(eval (let*-> nested-lets exp) env)` will work on its own. I
 (define (add-binding-to-frame! var val frame)
   (set-cdr! frame (cons (cons var val) (cdr frame))))
 ```
+
+## 4.13
+
+*Scheme allows us to create new bindings for variables by means of `define`, but provides no way to get rid of bindings. Implement for the evaluator a special form `make-unbound!` that removes the binding of a given symbol from the environment in which the `make-unbound!` expression is evaluated. This problem is not completely specified. For example, should we remove only the binding in the first frame of the environment? Complete the specification and justify any choices you make.*
+
+```scheme
+(define (make-unbound! var env)
+  (define (scan vars vals)
+    (cond? ((null? vars) (error "Variable not bound" var))
+      ((eq? var (cadr vars))
+        (set-cdr! vars (cddr vars))
+        (set-cdr! vals (cddr vals)))
+      (else (scan (cdr vars) (cdr vals)))))
+  (let ((frame (first-frame env)))
+    (scan (frame-variables frame) (frame-values frame))))
+```
+
+This setup of `make-unbound!` only affects the first frame of the current environment, in case other procedures are depending on variables higher up in the chain. I think this is the right decision, based on the fact that PHP treats `unset` in a similar fashion.

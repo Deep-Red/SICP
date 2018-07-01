@@ -1122,3 +1122,13 @@
     (cons (cdar frame) (frame-values (cdr frame)))))
 (define (add-binding-to-frame! var val frame)
   (set-cdr! frame (cons (cons var val) (cdr frame))))
+
+(define (make-unbound! var env)
+  (define (scan vars vals)
+    (cond? ((null? vars) (error "Variable not bound" var))
+      ((eq? var (cadr vars))
+        (set-cdr! vars (cddr vars))
+        (set-cdr! vals (cddr vals)))
+      (else (scan (cdr vars) (cdr vals)))))
+  (let ((frame (first-frame env)))
+    (scan (frame-variables frame) (frame-values frame))))
