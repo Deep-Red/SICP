@@ -53,3 +53,32 @@
   (can-replace ?person1 ?person2)
   (lisp-value < ?s1 ?s2))
 ```
+
+## 4.58  
+
+*Define a rule that says that a person is a "big shot" in a division if the person works in the division but does not have a supervisor who works in the division.*
+
+```scheme
+(rule (big shot ?employee)
+  (and
+    (job ?employee (?edivision . ?etitle))
+    (supervisor ?employee (?sdivision . ?stitle))
+    (not (same ?edivision ?sdivision))))
+```
+
+## 4.65
+
+*Cy D. Fect, looking forward to the day when he will rise in the organization, gives a query to find all the wheels (using the `wheel` rule of 4.4.1): `(wheel? who)` To his surprise, the system responds*
+
+```scheme
+;;; Query results:
+(wheel (Warbucks Oliver))
+(wheel (Bitdiddle Ben))
+(wheel (Warbucks Oliver))
+(wheel (Warbucks Oliver))
+(wheel (Warbucks Oliver))
+```
+
+*Why is Oliver Warbucks listed four times?*
+
+Because he is identified as a 'wheel' once for each bottom-rung employee under him (3 under Bitdiddle and 1 under Scrooge).
